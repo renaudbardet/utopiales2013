@@ -88,7 +88,7 @@ class GameWorld extends Scene
 		add(tmxEntity);
 		add(hero);
 		
-		hero.layer
+		hero.layer.
 		
 		super.begin();
 	}
