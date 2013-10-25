@@ -11,20 +11,45 @@ import com.haxepunk.utils.Key;
 import openfl.Assets;
 import utopiales2013.Hero;
 
-enum CellType {
-	Ground;
-	Wall;
-}
-
 /**
  * ...
  * @author Samuel Bouchet
  */
 
+enum CellType {
+	Ground;
+	Wall;
+}
+
+enum Direction {
+	Up;
+	Down;
+	Left;
+	Right;
+}
+
+typedef RecordFrame = {
+	x : Float,
+	y : Float,
+	dir : Direction
+}
+
+typedef Run =  {
+	record : Map<Int,RecordFrame>
+}
+
 class GameWorld extends Scene
 {
 	public static var instance:Scene ;
+
+	private static var TIME_TO_RESET:Int = 10000 ; // time before the jump, in ms
+	private static var RECORD_FRAME_RATE = 250 ; // ms between two snapshots
 	
+	private var runs : List<Run> ;
+	private var currentRun : Run ;
+
+	private var time : Int ; // the ingame time in ms, gets reseted every xx seconds
+
 	private var hero:Entity;
 
 	public function new()
@@ -41,6 +66,17 @@ class GameWorld extends Scene
 		if (Input.pressed(Key.ESCAPE)) {
 			HXP.scene = WelcomeWorld.instance;
 		}
+
+		var elapsed = Std.int( 1000/HXP.frameRate );
+
+		// if we have reach a new recordFrame, record
+		if( Math.floor(time / 250) < Math.floor(time + elapsed / 250) )
+			record() ;
+
+		time += elapsed ;
+
+		if( time >= TIME_TO_RESET )
+			timeJump() ;
 
 	}
 	
@@ -91,8 +127,35 @@ class GameWorld extends Scene
 		add(hero);
 		
 		//hero.layer
+
+		currentRun = {
+			record : new Map<Int,RecordFrame>()
+		} ;
 		
 		super.begin();
+	}
+
+	private function timeJump()
+	{
+		runs.add( currentRun ) ;
+		currentRun = {
+			record : new Map<Int,RecordFrame>()
+		} ;
+		// remove ghosts and create new ones
+		time = 0 ;
+	}
+
+	// called every .25s or so to record the current pos of the hero in the current run
+	private function record()
+	{
+		currentRun.record.set(
+			time,
+			{
+				x : hero.x,
+				y : hero.y,
+				dir : hero.direction
+			}
+		) ;
 	}
 	
 	override public function end()
