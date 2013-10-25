@@ -8,6 +8,7 @@ import com.haxepunk.tmx.TmxObject;
 import com.haxepunk.tmx.TmxObjectGroup;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
+import openfl.Assets;
 import utopiales2013.Hero;
 
 enum CellType {
@@ -49,16 +50,17 @@ class GameWorld extends Scene
 		hero = new Hero();
 	
 		// afficher le niveau (grille)
-		var tmxEntity:TmxEntity = new TmxEntity(null); // TODO : récupérer le TMXEntity
+		var tiles = new TmxEntity( "map/test.tmx" );
+		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
 		var gridWidth = 10;
 		var gridHeight = 10;
-		<
+		
 		// collisions de la map
-		tmxEntity.loadMask("tiles", "solid", [0]);
+		tiles.loadMask("tiles", "solid", [0]);
 		
 		// générer la grille depuis le niveau
 		var grid:Array<Array<CellType>> = new Array<Array<CellType>>();
-		var layer:TmxLayer = tmxEntity.map.getLayer("tiles");
+		var layer:TmxLayer = tiles.map.getLayer("tiles");
 		for (yCell in 0...gridHeight) {
 			var row = new Array<CellType>();
 			grid.push(row);
@@ -77,18 +79,18 @@ class GameWorld extends Scene
 		}
 		
 		// affiche le personnage à l'endroit prévu
-		var tmxObjectGroup:TmxObjectGroup = tmxEntity.map.getObjectGroup("objects");
-		for (obj:TmxObject in tmxObjectGroup.objects) {
+		var tmxObjectGroup:TmxObjectGroup = tiles.map.getObjectGroup("objects");
+		for (obj in tmxObjectGroup.objects) {
 			if (obj.name == "Start") {
 				hero.x = obj.x;
 				hero.y = obj.y;
 			}
 		}
 		
-		add(tmxEntity);
+		add(tiles);
 		add(hero);
 		
-		hero.layer.
+		//hero.layer
 		
 		super.begin();
 	}
