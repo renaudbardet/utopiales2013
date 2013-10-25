@@ -1,0 +1,6 @@
+/bin
+/obj
+/.build
+/docs
+*.db
+/LDTemplate.hxml

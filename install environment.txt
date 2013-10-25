@@ -1,0 +1,51 @@
+To work, this project needs HaXe+nme, HaxePunk, HaxePunk-gui, hscript, swf.
+To design maps, you may want to use Tiled.
+
+INSTALLATION
+HaXe+nme :
+http://www.haxenme.org/download/
+Use windows auto installer, then add the C:\Motion-Twin\Haxe folder to windows path.
+If you're a linux user I asume you won't get any problem to install it with your favorite package manager or using instructions from http://www.haxenme.org/.
+If your already have haxe installed, you can use :
+haxelib install nme
+
+dependencies  :
+haxelib install HaxePunk
+
+Tiled :
+http://www.mapeditor.org/
+Use windows auto installer.
+
+DOCUMENTATION
+HaxePunk  :
+http://haxepunk.com/learn/
+http://forum.haxepunk.com/
+https://github.com/MattTuttle/HaxePunk
+
+HaxePunk-gui  :
+https://bitbucket.org/Lythom/haxepunk-gui/
+http://forum.haxepunk.com/index.php?topic=261.0
+
+hscript :
+http://code.google.com/p/hscript/
+
+swf :
+https://github.com/haxenme/swf
+	
+Nape :
+http://napephys.com/help/manual.html
+
+FEATURES & INTEGRATED TOOLS
+- haxepunk ready to use project
+- multilingual ready thanks to translations tools under lib/tools/localization.
+- integrated gui (haxePunk-Gui)
+- lib/com/haxepunk/normalmap 	=> normal mapping tools for HaxePunk.
+- lib/com/haxepunk/animation 	=> MovieClip to animated bitmaps converter.
+- lib/com/haxepunk/tmx 			=> Make HaxePunk entity from Tiled maps (.tmx).
+- lib/tools/attributes			=> RGP like Attributes system.
+- lib/tools/display				=> ColorConverter
+- lib/tools/localization		=> Translation lib
+- lib/tools/FastMath.hx			=> Some optmized but approximate functions for Math.
+
+KNOWN LIMITATIONS
+- only flash target working atm. (because of HaxePunk-gui)

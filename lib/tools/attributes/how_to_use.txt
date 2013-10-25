@@ -1,0 +1,32 @@
+// create a character with some base stats
+var hero:AttributeSet = new AttributeSet();
+hero.get("str").baseValue = 10;
+hero.get("def").baseValue = 5;
+hero.get("hpMax").baseValue = 100;
+
+// create an item
+var sword:Item = new Item("Basic Sword");
+// attach a bonus that will be granted to the holder
+sword.addAdditionBonus("str", 5);
+// be carefull ! the following code would not work :
+// sword.get("str").baseValue = 5;
+// an item doesn't have native base stats, an item only have bonuses that are granted to holder
+// base stats of an item are used to calculate the total bonus they grant.
+
+// create an item item. (items can be holers)
+var stengthGem:Item = new Item("Strenth gem");
+// define a +20% bonus to str
+// addMultiplicationBonus(attributeName, pourcentValue, priority, description)
+stengthGem.addMultiplicationBonus("str", 0.2, 0,"add 20% efficiency to a gem");
+
+// equip the gem on the sword
+sword.equip(stengthGem); // the sword now give 5 + 1 (=5*0.2) str
+
+// equip the sword on the hero
+hero.equip(sword);
+
+// read the calculated stat of the hero
+trace(hero.get("str").value); // display "16"
+
+// display a precalculated bonus granted by the sword
+trace(sword.get("str").value); // display "6"

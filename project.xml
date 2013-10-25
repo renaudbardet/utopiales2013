@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta title="UtopialesGameJam2013" package="fr.aucreeperdepressif.utopialesgamejam2013" version="1.0.0" company="Lythom" />
+		
+	<app file="UtopialesGameJam2013" main="Main" path="bin" />
+		
+	<window fps="60" resizable="true" background="0x333333" />
+	<window width="960" height="640" unless="mobile" />
+	<window fullscreen="true" if="mobile" />
+
+	<!-- Project source files -->
+	<source path="src" />
+	<!-- LDTemplate libraries source files -->
+	<source path="lib" />
+	<!-- Lang files in classpath allows autompletion in FlashDevelop using en.xml keys -->
+	<source path="assets/lang" />
+	
+	<!-- Required by HaxePunk, allows multi-target support -->
+	<haxelib name="openfl" />
+	<!-- Main game framework used in this template -->
+	<haxelib name="HaxePunk" />
+
+	
+	<!-- Load pictures and animations -->
+	<assets path="assets/gfx" rename="gfx" type="image" include="*.png" />
+
+	<!-- Load sounds and musics -->
+	<assets path="assets/sfx" rename="sfx" type="sound" include="*.wav" />
+	<assets path="assets/music" rename="music" type="music" include="*.mp3" />
+	<!-- Load Fonts -->
+	<assets path="assets/font" rename="font" type="font" include="*.ttf" />
+	<!-- Load Tiled maps -->
+	<assets path="assets/map" rename="map" type="map" include="*.tmx" />
+
+</project>
