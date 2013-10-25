@@ -25,7 +25,7 @@ class GameWorld extends Scene
 {
 	public static var instance:Scene ;
 	
-	private var hero:Entity;
+	private var hero:Hero;
 
 	public function new()
 	{
@@ -41,6 +41,19 @@ class GameWorld extends Scene
 		if (Input.pressed(Key.ESCAPE)) {
 			HXP.scene = WelcomeWorld.instance;
 		}
+		
+		if (Input.check("up")) {
+			hero.move(Direction.Up);
+		}
+		if (Input.check("down")) {
+			hero.move(Direction.Down);
+		}
+		if (Input.check("left")) {
+			hero.move(Direction.Left);
+		}
+		if (Input.check("right")) {
+			hero.move(Direction.Right);
+		}
 
 	}
 	
@@ -48,7 +61,7 @@ class GameWorld extends Scene
 	{
 		// création des objets du niveau
 		hero = new Hero();
-	
+	/*
 		// afficher le niveau (grille)
 		var tiles = new TmxEntity( "map/test.tmx" );
 		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
@@ -87,7 +100,7 @@ class GameWorld extends Scene
 			}
 		}
 		
-		add(tiles);
+		add(tiles);*/
 		add(hero);
 		
 		//hero.layer
