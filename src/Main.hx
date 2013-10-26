@@ -19,6 +19,7 @@ class Main extends Engine
 	public function new()
 	{
 		super(kScreenWidth, kScreenHeight, kFrameRate, true);
+		HXP.frameRate = kFrameRate;
 	}
 
 	override public function init()
