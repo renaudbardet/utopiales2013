@@ -115,10 +115,8 @@ class GameWorld extends Scene
 		}
 		// turn advancement
 		if( inTime > TURN_DURATION )
-		{
-			
 			nextTurn() ;
-		}		var runDuration = (TURNS_PER_RUN * TURN_DURATION);
+		var runDuration = (TURNS_PER_RUN * TURN_DURATION);
 		var remainingTime:Float = Math.ceil((runDuration - turn * TURN_DURATION) / 1000);
 		var remainingTimeStr:String = Std.string(remainingTime);
 		if (remainingTimeStr.indexOf(".") < 0) {
@@ -139,17 +137,29 @@ class GameWorld extends Scene
 		++turn ;
 		inTime = inTime % TURN_DURATION ;
 
-		record() ;
-
 		currentMove = None ;
 		if (Input.check("up"))
-			currentMove = Some(Up) ;
-		else if (Input.check("down"))
-			currentMove = Some(Down) ;
-		else if (Input.check("left"))
-			currentMove = Some(Left) ;
-		else if (Input.check("right"))
-			currentMove = Some(Right) ;
+			if( hero.collide("solid", hero.x, hero.y - moveSpanY) == null )
+				currentMove = Some(Up) ;
+			else
+				hero.play( Up, false ) ;
+		else if (Input.check("down") )
+			if( hero.collide("solid", hero.x, hero.y + moveSpanY) == null )
+				currentMove = Some(Down) ;
+			else
+				hero.play( Down, false ) ;
+		else if (Input.check("left") )
+			if( hero.collide("solid", hero.x - moveSpanX, hero.y) == null )
+				currentMove = Some(Left) ;
+			else
+				hero.play( Left, false ) ;
+		else if (Input.check("right") )
+			if( hero.collide("solid", hero.x + moveSpanX, hero.y) == null )
+				currentMove = Some(Right) ;
+			else
+				hero.play( Right, false ) ;
+
+		record() ;
 
 		if( turn >= TURNS_PER_RUN )
 			timeJump() ;
