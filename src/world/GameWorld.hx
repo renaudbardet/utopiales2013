@@ -9,6 +9,7 @@ import com.haxepunk.tmx.TmxObjectGroup;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 import openfl.Assets;
+import utopiales2013.Chrono;
 import utopiales2013.Hero;
 
 /**
@@ -39,10 +40,13 @@ class GameWorld extends Scene
 	private static var RECORD_FRAME_RATE = 250 ; // ms between two snapshots
 	
 	private var hero:Hero;
+	private var chrono:Chrono;
+	
 	private var runs : List<Run> ;
 	private var currentRun : Run ;
 
 	private var time : Int ; // the ingame time in ms, gets reseted every xx seconds
+	
 
 	public function new()
 	{
@@ -87,7 +91,9 @@ class GameWorld extends Scene
 			record() ;
 
 		time += elapsed ;
-
+		var remainingTime = Std.string(Math.round(time * 100) / 100);
+		chrono.text = 'Time : $remainingTime' ;
+		
 		if( time >= TIME_TO_RESET )
 			timeJump() ;
 
@@ -97,24 +103,31 @@ class GameWorld extends Scene
 	{
 		// création des objets du niveau
 		hero = new Hero();
+		chrono = new Chrono();
+		
+		// positionnemetn des élements d'interface
+		chrono.x = Math.round(HXP.screen.width/2 - 20);
+		chrono.y = 5;
 	
 		// afficher le niveau (grille)
 		var tiles = new TmxEntity( "map/test.tmx" );
 		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
-		var gridWidth = 10;
-		var gridHeight = 10;
+		tiles.y = HXP.screen.height / 2 - tiles.map.fullHeight / 2;
+		tiles.x = HXP.screen.width / 2 - tiles.map.fullWidth / 2;
 		
 		// collisions de la map
 		tiles.loadMask("tiles", "solid", [0]);
 		
 		// générer la grille depuis le niveau
+		var gridWidth = tiles.map.width;
+		var gridHeight = tiles.map.height;
 		var grid:Array<Array<CellType>> = new Array<Array<CellType>>();
 		var layer:TmxLayer = tiles.map.getLayer("tiles");
 		for (yCell in 0...gridHeight) {
 			var row = new Array<CellType>();
 			grid.push(row);
 			for (xCell in 0...gridWidth) {
-				var iTile = layer.tileGIDs[xCell][yCell];
+				var iTile = layer.tileGIDs[yCell][xCell];
 				row.push(
 					switch (iTile)
 					{
@@ -138,8 +151,7 @@ class GameWorld extends Scene
 		
 		add(tiles);
 		add(hero);
-		
-		//hero.layer
+		add(chrono);
 
 		currentRun = {
 			record : new Map<Int,RecordFrame>()
@@ -150,12 +162,12 @@ class GameWorld extends Scene
 
 	private function timeJump()
 	{
-/*		runs.add( currentRun ) ;
+		/*runs.add( currentRun ) ;
 		currentRun = {
 			record : new Map<Int,RecordFrame>()
-		} ;
+		} ;*/
 		// remove ghosts and create new ones
-		time = 0 ;*/
+		time = 0 ;
 	}
 
 	// called every .25s or so to record the current pos of the hero in the current run
