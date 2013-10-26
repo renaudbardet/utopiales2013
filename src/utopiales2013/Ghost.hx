@@ -7,40 +7,31 @@ import com.haxepunk.masks.Hitbox;
  */
 class Ghost extends Hero
 {
-	private var _vision:Hitbox;
-	private var _detectionDistance:Int;
-	private var _moveSpanX:Float;
-	private var _moveSpanY:Float;
+	private var _vision:Vision;
+	
 	
 	public function new(detectionDistance:Int, moveSpanX:Float, moveSpanY:Float)
 	{
-		_detectionDistance = detectionDistance;
-		_moveSpanX = moveSpanX;
-		_moveSpanY = moveSpanY;
-		vision = new Hitbox();
+		vision = new Vision(this, detectionDistance, moveSpanX, moveSpanY);
 		super();
 	}
 	
 	override public function update():Void
 	{
 		super.update();
-		
-		var centerX = x + _moveSpanX / 2;
-		var centerY = y + _moveSpanY / 2;
-		//vision.height = 1 * this.directionPoint.x;
 	}
 	
-	function get_vision():Hitbox
+	function get_vision():Vision
 	{
 		return _vision;
 	}
 	
-	function set_vision(value:Hitbox):Hitbox
+	function set_vision(value:Vision):Vision
 	{
 		return _vision = value;
 	}
 	
-	public var vision(get_vision, set_vision):Hitbox;
+	public var vision(get_vision, set_vision):Vision;
 	
 	
 	

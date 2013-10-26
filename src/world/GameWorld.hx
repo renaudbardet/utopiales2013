@@ -32,7 +32,7 @@ typedef RecordFrame = {
 
 typedef Run =  {
 	record : Map<Int,RecordFrame>,
-	ghost:Hero
+	ghost:Ghost
 }
 
 class GameWorld extends Scene
@@ -42,6 +42,12 @@ class GameWorld extends Scene
 	private static var TURNS_PER_RUN:Int = 20 ;
 	private static var TURN_DURATION:Int = 250 ; // duration of a turn in ms
 	private static var DETECTION_DISTANCE:Int = 4 ; // vision en cases des ghosts (inclus la case du ghost lui même)
+	
+	private static var LAYER_GUI:Int = 100;
+	private static var LAYER_HERO:Int = 800;
+	private static var LAYER_GHOST:Int = 900;
+	private static var LAYER_VISION:Int = 950;
+	private static var LAYER_MAP:Int = 2000;
 	
 	private var moveSpanX:Float ;
 	private var moveSpanY:Float ;
@@ -54,6 +60,7 @@ class GameWorld extends Scene
 
 	private var turn : Int ; // turn in the current run
 	private var inTime : Int ; // ms since turn start
+	
 	
 
 	public function new()
@@ -85,7 +92,7 @@ class GameWorld extends Scene
 			var interY = moveTween( inTime, TURN_DURATION, prevFrame.y, nextFrame.y ) ;
 			r.ghost.x = interX ;
 			r.ghost.y = interY ;
-			r.ghost.play( prevFrame.direction, prevFrame.x != nextFrame.x || prevFrame.y != nextFrame.y ) ;
+			r.ghost.play( prevFrame.dir, prevFrame.x != nextFrame.x || prevFrame.y != nextFrame.y ) ;
 			
 			
 			
@@ -200,8 +207,11 @@ class GameWorld extends Scene
 		}
 		
 		add(tiles);
+		tiles.layer = LAYER_MAP;
 		add(hero);
+		hero.layer = LAYER_HERO;
 		add(chrono);
+		chrono.layer = LAYER_GUI;
 
 		currentRun = {
 			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ],
@@ -215,6 +225,11 @@ class GameWorld extends Scene
 	{
 		currentRun.ghost = new Ghost(DETECTION_DISTANCE, moveSpanX, moveSpanY) ;
 		add(currentRun.ghost) ;
+		currentRun.ghost.layer = LAYER_GHOST;
+		
+		add(currentRun.ghost.vision) ;
+		currentRun.ghost.vision.layer = LAYER_VISION;
+		
 		runs.add( currentRun ) ;
 		currentRun = {
 			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ],
