@@ -16,7 +16,7 @@ enum Direction {
  */
 class Hero extends Entity
 {
-	public var speed:Float = 3; // px/tick
+	public var speed:Float = 2; // px/tick
 	
 	
 	private var _spritemap:Spritemap;
@@ -24,15 +24,15 @@ class Hero extends Entity
 
 	public function new()
 	{
-		_spritemap = new Spritemap("gfx/hero.png", 20, 30);
-		_spritemap.add("up", [0], 5);
-		_spritemap.add("down", [3], 5);
-		_spritemap.add("left", [6], 5);
-		_spritemap.add("right",  [9], 5);
-		_spritemap.add("moveup", [0, 1, 2, 1], 5);
-		_spritemap.add("movedown", [3, 4, 5, 4], 5);
-		_spritemap.add("moveleft", [6, 7, 8, 7], 5);
-		_spritemap.add("moveright",  [9, 10, 11, 10], 5);
+		_spritemap = new Spritemap("gfx/heros.png", 20, 30);
+		_spritemap.add("right", [0], 5);
+		_spritemap.add("left", [4], 5);
+		_spritemap.add("up", [9], 5);
+		_spritemap.add("down",  [14], 5);
+		_spritemap.add("moveright", [0, 1, 2, 3, 2, 1], 5);
+		_spritemap.add("moveleft", [4, 5, 6, 7, 6 , 5], 5);
+		_spritemap.add("moveup", [8, 9, 10, 11, 10, 9], 5);
+		_spritemap.add("movedown",  [12, 13, 14, 15, 14 ,13], 5);
 		_spritemap.y = -10;
 		graphic = _spritemap;
 		_spritemap.play("down");
