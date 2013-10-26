@@ -15,6 +15,7 @@ import com.haxepunk.tmx.TmxObject;
 import com.haxepunk.tmx.TmxObjectGroup;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
+import com.haxepunk.World;
 import flash.display.Loader;
 import flash.events.Event;
 import flash.geom.Point;
@@ -46,7 +47,7 @@ typedef Run =  {
 	ghost:Ghost
 }
 
-class GameWorld extends Scene
+class GameWorld extends World
 {
 	public static var instance:Scene ;
 	
@@ -55,6 +56,8 @@ class GameWorld extends Scene
 	private static var TURN_DURATION:Int = 250 ; // duration of a turn in ms
 	private static var DETECTION_DISTANCE:Int = 4 ; // vision en cases des ghosts (inclus la case du ghost lui même)
 	
+	private static var BASE_SCORE = 10 ;
+
 	private static var LAYER_GUI:Int = 100;
 	private static var LAYER_HERO:Int = 800;
 	private static var LAYER_GHOST:Int = 900;
@@ -69,6 +72,7 @@ class GameWorld extends Scene
 
 	private var hero : Hero ;
 	private var chrono:Label;
+	private var scoreLabel:Label;
 	private var gameover:Label;
 	
 	private var runs : List<Run> ;
@@ -81,8 +85,11 @@ class GameWorld extends Scene
 	private var currentPieces:List<Entity> ;
 	
 	private var gameEnd:Bool = false;
+	private var updateInit:Bool = false;
 	
 	private var xmlDebugContent:String;
+
+	private var score:Int ;
 
 	public function new(xmlContent:String = null )
 	{
@@ -98,6 +105,12 @@ class GameWorld extends Scene
 	override public function update()
 	{
 		super.update();
+		
+		if (!updateInit) {
+			updateInit = true;
+			spawnPiece() ;
+			spawnPiece() ;
+		}
 		
 		if (Input.pressed(Key.ESCAPE)) {
 			HXP.scene = new GameWorld(xmlDebugContent);
@@ -151,10 +164,6 @@ class GameWorld extends Scene
 			}		var runDuration = (TURNS_PER_RUN * TURN_DURATION);
 			var remainingTime:Float = Math.ceil((runDuration - turn * TURN_DURATION) / 1000);
 			var remainingTimeStr:String = Std.string(remainingTime);
-			if (remainingTimeStr.indexOf(".") < 0) {
-				remainingTimeStr = remainingTimeStr + ".0";
-			}
-			trace(remainingTimeStr);
 			chrono.text = Std.string(remainingTime);
 			if (remainingTime > 3) {
 				chrono.color = 0xFFFFFF;
@@ -168,10 +177,6 @@ class GameWorld extends Scene
 		var runDuration = (TURNS_PER_RUN * TURN_DURATION);
 		var remainingTime:Float = Math.ceil((runDuration - turn * TURN_DURATION) / 1000);
 		var remainingTimeStr:String = Std.string(remainingTime);
-		if (remainingTimeStr.indexOf(".") < 0) {
-			remainingTimeStr = remainingTimeStr + ".0";
-		}
-		trace(remainingTimeStr);
 		chrono.text = Std.string(remainingTime);
 		if (remainingTime > 3) {
 			chrono.color = 0xFFFFFF;
@@ -190,10 +195,20 @@ class GameWorld extends Scene
 		if (hero.collide("vision", hero.x, hero.y) != null) {
 			gameEnd = true;
 			add(gameover);
-			
-			trace("the end");
 		}
 		
+		// recuperation bonus
+		var retreivedPiece = hero.collide( "piece", hero.x, hero.y ) ;
+		if( retreivedPiece != null )
+		{
+			remove( retreivedPiece ) ;
+			currentPieces.remove( retreivedPiece ) ;
+			score += BASE_SCORE ;
+			scoreLabel.text = '' + score ;
+			scoreLabel.x = HXP.screen.width - (scoreLabel.width + 4) ;
+			spawnPiece() ;
+		}
+
 		if(!gameEnd){
 			++turn ;
 			inTime = inTime % TURN_DURATION ;
@@ -236,6 +251,7 @@ class GameWorld extends Scene
 		hero = new Hero();
 		Label.defaultFont = openfl.Assets.getFont("font/pf_ronda_seven.ttf");
 		chrono = new Label();
+		scoreLabel = new Label();
 		gameover = new Label("Paradoxe !");
 		gameover.size = 96;
 		gameover.color = 0x000000;
@@ -246,6 +262,11 @@ class GameWorld extends Scene
 		chrono.x = Math.round(HXP.screen.width/2 - 20);
 		chrono.y = 5;
 		chrono.size = 48;
+		scoreLabel.text = '0' ;
+		scoreLabel.color = 0xFFFFFF ;
+		scoreLabel.x = HXP.screen.width - (scoreLabel.width + 15) ;
+		scoreLabel.y = 5 ;
+		scoreLabel.size = 26 ;
 	
 		// afficher le niveau (grille)
 		if (xmlDebugContent != null) {
@@ -278,10 +299,8 @@ class GameWorld extends Scene
 				row.push(
 					switch (iTile)
 					{
-						case 1:
-							CellType.Wall;
-						default:
-							CellType.Ground;
+						case 1 :	CellType.Wall ;
+						default :	CellType.Ground ;
 					}
 				);
 			}
@@ -302,6 +321,8 @@ class GameWorld extends Scene
 		hero.layer = LAYER_HERO;
 		add(chrono);
 		chrono.layer = LAYER_GUI;
+		add(scoreLabel);
+		scoreLabel.layer = LAYER_GUI;
 
 		currentRun = {
 			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ],
@@ -310,8 +331,8 @@ class GameWorld extends Scene
 		currentMove = None ;
 		
 		currentPieces = new List() ;
-		spawnPiece() ;
-		spawnPiece() ;
+
+		score = 0 ;
 
 		#if debug
 			// test dynamic de niveaux
@@ -323,7 +344,7 @@ class GameWorld extends Scene
 				var myLoader:URLLoader = new URLLoader();
 				var request:URLRequest = new URLRequest(inputText.text);
 				myLoader.addEventListener(Event.COMPLETE, function(e) {
-					HXP.world = new GameWorld(cast(myLoader.data));
+					HXP.scene = new GameWorld(cast(myLoader.data));
 				});
 				myLoader.load(request);
 			});
@@ -369,23 +390,24 @@ class GameWorld extends Scene
 		excluders.push( hero ) ;
 
 		var spawnX, spawnY ;
+		var isValidPosition = true;
 		do{
 
 			spawnX = tiles.x + Std.int( Math.random() * gridWidth )*moveSpanX ;
 			spawnY = tiles.y + Std.int( Math.random() * gridHeight )*moveSpanY ;
 
-			for( ex in excluders )
-			{
-				if(	( spawnX < ex.x && spawnX > ex.x - 7*moveSpanX )
-				||	( spawnX > ex.x && spawnX < ex.x + 7*moveSpanX )
-				||	( spawnY < ex.y && spawnY > ex.y - 7*moveSpanY )
-				||	( spawnY > ex.y && spawnY < ex.y + 7*moveSpanY ) )
-					continue ;
+			isValidPosition = (this.collidePoint( "solid", spawnX + moveSpanX / 2, spawnY + moveSpanY / 2 ) == null);
+			if(isValidPosition){
+				for( ex in excluders )
+				{
+					if (HXP.distance(ex.x, ex.y, spawnX,  spawnY) < 4.5 * (moveSpanX + moveSpanY) / 2) {
+						isValidPosition = false;
+						break;
+					}
+				}
 			}
 
-		} while( this.collidePoint( "solid", spawnX + moveSpanX/2, spawnY+moveSpanY/2 ) != null ) ;
-
-		trace( 'spawning at $spawnX,$spawnY') ;
+		} while ( !isValidPosition );
 
 		var piece = new Entity() ;
 		var spritemap = new Spritemap("gfx/SOLS.png", 20, 20) ;
@@ -397,6 +419,7 @@ class GameWorld extends Scene
 		piece.x = spawnX ;
 		piece.y = spawnY ;
 		piece.type = "piece" ;
+		piece.setHitbox(19, 19, -2, -2);
 
 	}
 	
