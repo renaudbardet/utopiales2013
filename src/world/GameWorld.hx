@@ -1,5 +1,6 @@
 package world;
 import com.haxepunk.Entity;
+import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.gui.Button;
 import com.haxepunk.gui.Control;
 import com.haxepunk.gui.Label;
@@ -60,6 +61,9 @@ class GameWorld extends Scene
 	private static var LAYER_VISION:Int = 950;
 	private static var LAYER_MAP:Int = 2000;
 	
+	private var tiles:TmxEntity ;
+	private var gridWidth:Int ;// in tiles
+	private var gridHeight:Int ;
 	private var moveSpanX:Float ;
 	private var moveSpanY:Float ;
 
@@ -73,11 +77,12 @@ class GameWorld extends Scene
 	private var turn : Int ; // turn in the current run
 	private var inTime : Int ; // ms since turn start
 	private var currentMove : Option<Direction> ;
+
+	private var currentPieces:List<Entity> ;
 	
 	private var gameEnd:Bool = false;
 	
 	private var xmlDebugContent:String;
-	var tiles:TmxEntity;
 
 	public function new(xmlContent:String = null )
 	{
@@ -134,8 +139,8 @@ class GameWorld extends Scene
 			{
 				prevFrame = r.record.get( turn ) ;
 				var nextFrame = r.record.get( turn + 1 ) ;
-				r.ghost.x = moveTween( inTime, TURN_DURATION, prevFrame.x, nextFrame.x ) ;
-				r.ghost.y = moveTween( inTime, TURN_DURATION, prevFrame.y, nextFrame.y ) ;
+				r.ghost.x = ghostTween( inTime, TURN_DURATION, prevFrame.x, nextFrame.x ) ;
+				r.ghost.y = ghostTween( inTime, TURN_DURATION, prevFrame.y, nextFrame.y ) ;
 				r.ghost.play( nextFrame.dir, prevFrame.x != nextFrame.x || prevFrame.y != nextFrame.y ) ;
 			}
 			// turn advancement
@@ -252,8 +257,8 @@ class GameWorld extends Scene
 		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
 		moveSpanX = tiles.map.tileHeight ;
 		moveSpanY = tiles.map.tileWidth ;
-		var gridWidth = 10;
-		var gridHeight = 10;
+		gridWidth = tiles.map.width ;
+		gridHeight = tiles.map.height ;
 		tiles.y = HXP.screen.height / 2 - tiles.map.fullHeight / 2;
 		tiles.x = HXP.screen.width / 2 - tiles.map.fullWidth / 2;
 		
@@ -304,6 +309,10 @@ class GameWorld extends Scene
 		} ;
 		currentMove = None ;
 		
+		currentPieces = new List() ;
+		spawnPiece() ;
+		spawnPiece() ;
+
 		#if debug
 			// test dynamic de niveaux
 			var inputText:TextInput = new TextInput("testLD _", 600, 0, 200, 30);
@@ -353,6 +362,43 @@ class GameWorld extends Scene
 			}
 		) ;
 	}
+
+	private function spawnPiece(){
+
+		var excluders : Array<Entity> = Lambda.array( currentPieces ) ;
+		excluders.push( hero ) ;
+
+		var spawnX, spawnY ;
+		do{
+
+			spawnX = tiles.x + Std.int( Math.random() * gridWidth )*moveSpanX ;
+			spawnY = tiles.y + Std.int( Math.random() * gridHeight )*moveSpanY ;
+
+			for( ex in excluders )
+			{
+				if(	( spawnX < ex.x && spawnX > ex.x - 7*moveSpanX )
+				||	( spawnX > ex.x && spawnX < ex.x + 7*moveSpanX )
+				||	( spawnY < ex.y && spawnY > ex.y - 7*moveSpanY )
+				||	( spawnY > ex.y && spawnY < ex.y + 7*moveSpanY ) )
+					continue ;
+			}
+
+		} while( this.collidePoint( "solid", spawnX + moveSpanX/2, spawnY+moveSpanY/2 ) != null ) ;
+
+		trace( 'spawning at $spawnX,$spawnY') ;
+
+		var piece = new Entity() ;
+		var spritemap = new Spritemap("gfx/SOLS.png", 20, 20) ;
+		spritemap.add( "std", [3], 1 ) ;
+		spritemap.play("std") ;
+		piece.graphic = spritemap ;
+		add(piece) ;
+
+		piece.x = spawnX ;
+		piece.y = spawnY ;
+		piece.type = "piece" ;
+
+	}
 	
 	override public function end()
 	{
@@ -361,6 +407,17 @@ class GameWorld extends Scene
 	}
 
 	private static function moveTween( inTime:Float, totalTime:Float, tweenStart:Float, tweenEnd:Float ):Float
+	{
+		/*var t = inTime ;
+		var b = tweenStart ;
+		var c = tweenEnd - tweenStart ;
+		var d = totalTime ;
+		return (t/d * c) + b ;
+		*/
+		return ghostTween(inTime, totalTime, tweenStart, tweenEnd) ;
+	}
+
+	private static function ghostTween( inTime:Float, totalTime:Float, tweenStart:Float, tweenEnd:Float ):Float
 	{
 		var t = inTime ;
 		var b = tweenStart ;
