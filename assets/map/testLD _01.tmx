@@ -3,7 +3,7 @@
  <tileset firstgid="1" source="tileset.tsx"/>
  <layer name="tiles" width="23" height="15">
   <data encoding="base64" compression="zlib">
-   eJzFkksKgDAMBVv/Wn+49Bbi/e9mCg1IMK8VKS5mk6bDa1JrjCkyUBItsWeg/9FdETXhRN2FevPBPUSyoXPNzXm3iHsF+TX3Ux57239Kv3SjvL6vC3dS8ks3mh9yMyNwy//w1u2AW8PP+gzuQ5n52z/I+2Nvd/Nre01x2wenBL0BuduIl9Hm7+sTMWdgIS7aKBmb
+   eJzFkrEOhSAMRdGnouJgHN19bzAO6v//mzWhiWnoBfNiHM5S4HBpmYwx3wf4ETMxPsDyorsgSsKJuvP16g93G8mG1jU35x0i7h7k19yhPBmRE5/E/dKN8lqiJprE/NKN+ofcTAfc8j/cdTvg1jh7vXv3qvT87h/k+bG3vvi1uaa4s4BTgt6A3DbiZbT+L/7uLUAs8zW7dv4A84UiQQ==
   </data>
  </layer>
  <objectgroup name="objects" width="23" height="15">
