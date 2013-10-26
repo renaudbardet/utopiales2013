@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="48" height="28" tilewidth="20" tileheight="20">
+ <tileset firstgid="1" source="tileset.tsx"/>
+ <layer name="Calque de Tile 1" width="48" height="28">
+  <data encoding="base64" compression="zlib">
+   eJztzrENADAMAyA3/x/dMyxLDOxckhv3Rvn7+/cf/pv8/f37D/9N/v7+/Yf/Jn9//20fVjsF1Q==
+  </data>
+ </layer>
+</map>

@@ -1,0 +1,2 @@
+Créer le sol et les murs dans un calque nomme "tiles"
+Créer un layer "object" contenant un objet dont le "name" est valorisé à "start". Le placer à l'endroit souhaité du point de départ.
