@@ -56,6 +56,8 @@ class GameWorld extends World
 	private static var TURN_DURATION:Int = 250 ; // duration of a turn in ms
 	private static var DETECTION_DISTANCE:Int = 4 ; // vision en cases des ghosts (inclus la case du ghost lui même)
 	
+	private static var BASE_SCORE = 10 ;
+
 	private static var LAYER_GUI:Int = 100;
 	private static var LAYER_HERO:Int = 800;
 	private static var LAYER_GHOST:Int = 900;
@@ -70,6 +72,7 @@ class GameWorld extends World
 
 	private var hero : Hero ;
 	private var chrono:Label;
+	private var scoreLabel:Label;
 	private var gameover:Label;
 	
 	private var runs : List<Run> ;
@@ -85,6 +88,8 @@ class GameWorld extends World
 	private var updateInit:Bool = false;
 	
 	private var xmlDebugContent:String;
+
+	private var score:Int ;
 
 	public function new(xmlContent:String = null )
 	{
@@ -192,6 +197,18 @@ class GameWorld extends World
 			add(gameover);
 		}
 		
+		// recuperation bonus
+		var retreivedPiece = hero.collide( "piece", hero.x, hero.y ) ;
+		if( retreivedPiece != null )
+		{
+			remove( retreivedPiece ) ;
+			currentPieces.remove( retreivedPiece ) ;
+			score += BASE_SCORE ;
+			scoreLabel.text = '' + score ;
+			scoreLabel.x = HXP.screen.width - (scoreLabel.width + 4) ;
+			spawnPiece() ;
+		}
+
 		if(!gameEnd){
 			++turn ;
 			inTime = inTime % TURN_DURATION ;
@@ -234,6 +251,7 @@ class GameWorld extends World
 		hero = new Hero();
 		Label.defaultFont = openfl.Assets.getFont("font/pf_ronda_seven.ttf");
 		chrono = new Label();
+		scoreLabel = new Label();
 		gameover = new Label("Paradoxe !");
 		gameover.size = 96;
 		gameover.color = 0x000000;
@@ -244,6 +262,11 @@ class GameWorld extends World
 		chrono.x = Math.round(HXP.screen.width/2 - 20);
 		chrono.y = 5;
 		chrono.size = 48;
+		scoreLabel.text = '0' ;
+		scoreLabel.color = 0xFFFFFF ;
+		scoreLabel.x = HXP.screen.width - (scoreLabel.width + 15) ;
+		scoreLabel.y = 5 ;
+		scoreLabel.size = 26 ;
 	
 		// afficher le niveau (grille)
 		if (xmlDebugContent != null) {
@@ -276,10 +299,8 @@ class GameWorld extends World
 				row.push(
 					switch (iTile)
 					{
-						case 1:
-							CellType.Wall;
-						default:
-							CellType.Ground;
+						case 1 :	CellType.Wall ;
+						default :	CellType.Ground ;
 					}
 				);
 			}
@@ -300,6 +321,8 @@ class GameWorld extends World
 		hero.layer = LAYER_HERO;
 		add(chrono);
 		chrono.layer = LAYER_GUI;
+		add(scoreLabel);
+		scoreLabel.layer = LAYER_GUI;
 
 		currentRun = {
 			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ],
@@ -308,6 +331,8 @@ class GameWorld extends World
 		currentMove = None ;
 		
 		currentPieces = new List() ;
+
+		score = 0 ;
 
 		#if debug
 			// test dynamic de niveaux
