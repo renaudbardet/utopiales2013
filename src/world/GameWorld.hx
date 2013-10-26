@@ -71,6 +71,7 @@ class GameWorld extends World
 	private var hero : Hero ;
 	private var chrono:Label;
 	private var gameover:Label;
+	private var txtWaitForKey:Label;
 	
 	private var runs : List<Run> ;
 	private var currentRun : Run ;
@@ -81,10 +82,13 @@ class GameWorld extends World
 
 	private var currentPieces:List<Entity> ;
 	
+	private var waitForKey:Bool;
 	private var gameEnd:Bool = false;
 	private var updateInit:Bool = false;
 	
 	private var xmlDebugContent:String;
+	
+	
 
 	public function new(xmlContent:String = null )
 	{
@@ -111,7 +115,12 @@ class GameWorld extends World
 			HXP.scene = new GameWorld(xmlDebugContent);
 		}
 		
-		if(!gameEnd){
+		if (waitForKey && Input.pressed(Key.ANY)) {
+			waitForKey = false;
+			this.remove(txtWaitForKey);
+		}
+		
+		if(!gameEnd && !waitForKey){
 
 			inTime += Std.int( 1000/HXP.frameRate );
 
@@ -166,25 +175,13 @@ class GameWorld extends World
 				chrono.color = 0xFF3E3E;
 			}
 		}
-		// turn advancement
-		if( inTime > TURN_DURATION )
-			nextTurn() ;
-		var runDuration = (TURNS_PER_RUN * TURN_DURATION);
-		var remainingTime:Float = Math.ceil((runDuration - turn * TURN_DURATION) / 1000);
-		var remainingTimeStr:String = Std.string(remainingTime);
-		chrono.text = Std.string(remainingTime);
-		if (remainingTime > 3) {
-			chrono.color = 0xFFFFFF;
-		} else {
-			chrono.color = 0xFF3E3E;
-		}
 	}
 
 	private function nextTurn()
 	{
 		// aimante le héro sur la grille
-		hero.x = Math.round(hero.x / 20) * 20 + tiles.x;
-		hero.y = Math.round(hero.y / 20) * 20 + tiles.y;
+		hero.x = Math.round((hero.x - tiles.x) / 20) * 20 + tiles.x;
+		hero.y = Math.round((hero.y - tiles.y) / 20) * 20 + tiles.y;
 				
 		// condition de fin
 		if (hero.collide("vision", hero.x, hero.y) != null) {
@@ -244,6 +241,12 @@ class GameWorld extends World
 		chrono.x = Math.round(HXP.screen.width/2 - 20);
 		chrono.y = 5;
 		chrono.size = 48;
+		
+		txtWaitForKey = new Label("Appuyez sur une touche\n pour entrer en phase");
+		txtWaitForKey.size = 24;
+		txtWaitForKey.color = 0x000000;
+		txtWaitForKey.x = HXP.screen.width / 2 - gameover.width / 4;
+		txtWaitForKey.y = HXP.screen.height / 2 - gameover.height / 2;
 	
 		// afficher le niveau (grille)
 		if (xmlDebugContent != null) {
@@ -252,7 +255,7 @@ class GameWorld extends World
 			tiles = new TmxEntity( "map/test.tmx" );
 		}
 		
-		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
+		tiles.loadGraphic( "gfx/SOLS.png", ["tiles"] ) ;
 		moveSpanX = tiles.map.tileHeight ;
 		moveSpanY = tiles.map.tileWidth ;
 		gridWidth = tiles.map.width ;
@@ -330,6 +333,7 @@ class GameWorld extends World
 
 	private function timeJump()
 	{
+		// reset positions and pause the game
 		currentRun.ghost = new Ghost(DETECTION_DISTANCE, moveSpanX, moveSpanY) ;
 		add(currentRun.ghost) ;
 		currentRun.ghost.layer = LAYER_GHOST;
@@ -344,6 +348,12 @@ class GameWorld extends World
 		}
 		turn = 0 ;
 		inTime = 0 ;
+		
+		waitForKey = true;
+		if (txtWaitForKey.world == null) {
+			add(txtWaitForKey);
+		}
+		update();
 	}
 
 	// called every .25s or so to record the current pos of the hero in the current run
