@@ -10,6 +10,8 @@ import com.haxepunk.tmx.TmxObject;
 import com.haxepunk.tmx.TmxObjectGroup;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
+import flash.geom.Point;
+import haxe.ds.Option;
 import openfl.Assets;
 import utopiales2013.Ghost;
 import utopiales2013.Hero;
@@ -60,7 +62,7 @@ class GameWorld extends Scene
 
 	private var turn : Int ; // turn in the current run
 	private var inTime : Int ; // ms since turn start
-	
+	private var currentMove : Option<Direction> ;
 	
 
 	public function new()
@@ -82,20 +84,41 @@ class GameWorld extends Scene
 
 		inTime += Std.int( 1000/HXP.frameRate );
 
-		
+		// interpolate hero position
+		var prevFrame = currentRun.record.get(turn) ;
+		var nextX = prevFrame.x ;
+		var nextY = prevFrame.y ;
+		var currentDir = Up ;
+		var isMoving = true ;
+		switch ( currentMove ) {
+			case None:
+				currentDir = prevFrame.dir ;
+				isMoving = false ;
+			case Some( Up )		:
+				nextY -= moveSpanY ;
+				currentDir = Up ;
+			case Some( Down )	:
+				nextY += moveSpanY ;
+				currentDir = Down ;
+			case Some( Left )	:
+				nextX -= moveSpanX ;
+				currentDir = Left ;
+			case Some( Right )	:
+				nextX += moveSpanX ;
+				currentDir = Right ;
+		}
+		hero.x = moveTween( inTime, TURN_DURATION, prevFrame.x, nextX ) ;
+		hero.y = moveTween( inTime, TURN_DURATION, prevFrame.y, nextY ) ;
+		hero.play( currentDir, isMoving ) ;
+
 		// pilot ghosts
 		for( r in runs )
 		{
-			var prevFrame = r.record.get( turn ) ;
+			prevFrame = r.record.get( turn ) ;
 			var nextFrame = r.record.get( turn + 1 ) ;
-			var interX = moveTween( inTime, TURN_DURATION, prevFrame.x, nextFrame.x ) ;
-			var interY = moveTween( inTime, TURN_DURATION, prevFrame.y, nextFrame.y ) ;
-			r.ghost.x = interX ;
-			r.ghost.y = interY ;
-			r.ghost.play( prevFrame.dir, prevFrame.x != nextFrame.x || prevFrame.y != nextFrame.y ) ;
-			
-			
-			
+			r.ghost.x = moveTween( inTime, TURN_DURATION, prevFrame.x, nextFrame.x ) ;
+			r.ghost.y = moveTween( inTime, TURN_DURATION, prevFrame.y, nextFrame.y ) ;
+			r.ghost.play( nextFrame.dir, prevFrame.x != nextFrame.x || prevFrame.y != nextFrame.y ) ;
 		}
 		// turn advancement
 		if( inTime > TURN_DURATION )
@@ -125,26 +148,15 @@ class GameWorld extends Scene
 
 		record() ;
 
-		var move = false;
-		if (Input.check("up")) {
-			hero.move(Direction.Up, moveSpanY);
-			move = true;
-		}
-		else if (Input.check("down")) {
-			hero.move(Direction.Down, moveSpanY);
-			move = true;
-		}
-		else if (Input.check("left")) {
-			hero.move(Direction.Left, moveSpanX);
-			move = true;
-		}
-		else if (Input.check("right")) {
-			hero.move(Direction.Right, moveSpanX);
-			move = true;
-		}
-		if (!move) {
-			hero.stop();
-		}
+		currentMove = None ;
+		if (Input.check("up"))
+			currentMove = Some(Up) ;
+		else if (Input.check("down"))
+			currentMove = Some(Down) ;
+		else if (Input.check("left"))
+			currentMove = Some(Left) ;
+		else if (Input.check("right"))
+			currentMove = Some(Right) ;
 
 		if( turn >= TURNS_PER_RUN )
 			timeJump() ;
@@ -217,6 +229,7 @@ class GameWorld extends Scene
 			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ],
 			ghost : null
 		} ;
+		currentMove = None ;
 		
 		super.begin();
 	}
