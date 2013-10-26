@@ -48,6 +48,7 @@ typedef Run =  {
 class GameWorld extends Scene
 {
 	public static var instance:Scene ;
+	
 
 	private static var TURNS_PER_RUN:Int = 20 ;
 	private static var TURN_DURATION:Int = 250 ; // duration of a turn in ms
@@ -206,7 +207,7 @@ class GameWorld extends Scene
 				else
 					hero.play( Left, false ) ;
 			else if (Input.check("right") )
-				if( hero.collide("solid", hero.x + moveSpanX, hero.y) == null )
+				if( hero.collide("solid", hero.x + moveSpanX, hero.y ) == null )
 					currentMove = Some(Right) ;
 				else
 					hero.play( Right, false ) ;
@@ -281,8 +282,8 @@ class GameWorld extends Scene
 		var tmxObjectGroup:TmxObjectGroup = tiles.map.getObjectGroup("objects");
 		for (obj in tmxObjectGroup.objects) {
 			if (obj.name == "start") {
-				hero.x = obj.x;
-				hero.y = obj.y;
+				hero.x = Math.round(obj.x/20)*20+tiles.x;
+				hero.y = Math.round(obj.y/20)*20+tiles.y;
 			}
 		}
 		
@@ -301,8 +302,8 @@ class GameWorld extends Scene
 		
 		#if debug
 			// test dynamic de niveaux
-			var inputText:TextInput = new TextInput("testLD _", 0, 610, 200, 30);
-			var bLoad:Button = new Button("Charger", 210, 610, 50, 30);
+			var inputText:TextInput = new TextInput("testLD _", 600, 0, 200, 30);
+			var bLoad:Button = new Button("Charger", 800, 0, 50, 30);
 			add(inputText);
 			add(bLoad);
 			bLoad.addEventListener(Button.CLICKED, function(e) {

@@ -43,7 +43,7 @@ class Hero extends Entity
 		
 		super() ;
 		
-		setHitbox(20, 20, 0, 0);
+		setHitbox(16, 16, -2, -2);
 	}
 	
 	override public function update():Void
