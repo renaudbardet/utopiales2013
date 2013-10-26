@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="25" height="16" tilewidth="20" tileheight="20">
- <tileset firstgid="1" name="SOLS" tilewidth="20" tileheight="20">
-  <image source="../gfx/SOLS.png" width="20" height="140"/>
- </tileset>
- <layer name="tiles" width="25" height="16">
+<map version="1.0" orientation="orthogonal" width="23" height="15" tilewidth="20" tileheight="20">
+ <tileset firstgid="1" source="tileset.tsx"/>
+ <layer name="tiles" width="23" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjYmBgYKIDZqQhHrVj1I5RO0btGLUD0w5aYwDgBwHf
+   eJzjYGBg4KAhlqIBHjV71OxRs0fNprbZtMIAEesd+w==
   </data>
  </layer>
- <objectgroup name="objects" width="25" height="16">
-  <object name="start" x="233" y="53"/>
+ <objectgroup name="objects" width="23" height="15">
+  <object name="start" x="228" y="46"/>
  </objectgroup>
 </map>

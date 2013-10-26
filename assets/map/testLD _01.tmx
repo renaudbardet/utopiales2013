@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="48" height="28" tilewidth="20" tileheight="20">
+<map version="1.0" orientation="orthogonal" width="23" height="15" tilewidth="20" tileheight="20">
  <tileset firstgid="1" source="tileset.tsx"/>
- <layer name="Calque de Tile 1" width="48" height="28">
+ <layer name="tiles" width="23" height="15">
   <data encoding="base64" compression="zlib">
-   eJzt2DEKACAMQ9HY+x9aXAUnJRL6A13loS0US1KZ62XWecNY+D3+vWcS/en3j/+fP31+8ePHjx9/Tz/7Wz//6c1v/Yn9kz6/Tn/y/wMhJDcTeAYDEw==
+   eJzFkksKgDAMBVv/Wn+49Bbi/e9mCg1IMK8VKS5mk6bDa1JrjCkyUBItsWeg/9FdETXhRN2FevPBPUSyoXPNzXm3iHsF+TX3Ux57239Kv3SjvL6vC3dS8ks3mh9yMyNwy//w1u2AW8PP+gzuQ5n52z/I+2Nvd/Nre01x2wenBL0BuduIl9Hm7+sTMWdgIS7aKBmb
   </data>
  </layer>
+ <objectgroup name="objects" width="23" height="15">
+  <object name="start" x="227" y="92"/>
+ </objectgroup>
 </map>

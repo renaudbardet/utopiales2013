@@ -3,10 +3,10 @@
  <tileset firstgid="1" source="tileset.tsx"/>
  <layer name="tiles" width="23" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjZGBgYKIBZgZidiCWogHmpKPZyjjYrDgwG5IaGSRMitm4MD41hMyWp5HZAkAsh8SXQ8LY1BMKk6GaTpD9BMLiSGwWNH9jCxtlPGajY3Es+vHF6UCZLYOGhbDoR08P5Lqb0rjkBWI+GmB+IAYA+xceMg==
+   eJzF08sKgCAQBVB7WPTOlmKr/v8fm8DFcNFEyGlxMKa4TmNVSqm6gIb0xBYwCGa3RBPjdeye9njtilyHskcyMTM8j7Wc7J31/Dj9yns/IjNIZSPsW/Is3/bGbMfYRN3AfHJnkuPPbHzv0CxcBH4/kv/l19kLWQvYyA0Hihzx
   </data>
  </layer>
  <objectgroup name="objects" width="23" height="15">
-  <object name="start" x="207" y="152"/>
+  <object name="start" x="150" y="172"/>
  </objectgroup>
 </map>
