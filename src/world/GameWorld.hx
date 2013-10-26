@@ -21,13 +21,6 @@ enum CellType {
 	Wall;
 }
 
-enum Direction {
-	Up;
-	Down;
-	Left;
-	Right;
-}
-
 typedef RecordFrame = {
 	x : Float,
 	y : Float,
@@ -66,17 +59,25 @@ class GameWorld extends Scene
 			HXP.scene = WelcomeWorld.instance;
 		}
 		
+		var move = false;
 		if (Input.check("up")) {
 			hero.move(Direction.Up);
+			move = true;
 		}
 		if (Input.check("down")) {
 			hero.move(Direction.Down);
+			move = true;
 		}
 		if (Input.check("left")) {
 			hero.move(Direction.Left);
+			move = true;
 		}
 		if (Input.check("right")) {
 			hero.move(Direction.Right);
+			move = true;
+		}
+		if (!move) {
+			hero.stop();
 		}
 
 		var elapsed = Std.int( 1000/HXP.frameRate );
@@ -96,7 +97,7 @@ class GameWorld extends Scene
 	{
 		// création des objets du niveau
 		hero = new Hero();
-	/*
+	
 		// afficher le niveau (grille)
 		var tiles = new TmxEntity( "map/test.tmx" );
 		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
@@ -129,13 +130,13 @@ class GameWorld extends Scene
 		// affiche le personnage à l'endroit prévu
 		var tmxObjectGroup:TmxObjectGroup = tiles.map.getObjectGroup("objects");
 		for (obj in tmxObjectGroup.objects) {
-			if (obj.name == "Start") {
+			if (obj.name == "start") {
 				hero.x = obj.x;
 				hero.y = obj.y;
 			}
 		}
 		
-		add(tiles);*/
+		add(tiles);
 		add(hero);
 		
 		//hero.layer
@@ -149,12 +150,12 @@ class GameWorld extends Scene
 
 	private function timeJump()
 	{
-		runs.add( currentRun ) ;
+/*		runs.add( currentRun ) ;
 		currentRun = {
 			record : new Map<Int,RecordFrame>()
 		} ;
 		// remove ghosts and create new ones
-		time = 0 ;
+		time = 0 ;*/
 	}
 
 	// called every .25s or so to record the current pos of the hero in the current run
