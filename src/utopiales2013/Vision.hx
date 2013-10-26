@@ -57,19 +57,21 @@ class Vision extends Entity
 				height = Math.ceil(_detectionDistance * _moveSpanY);
 				x = _ghost.x + TOLERANCE;
 				y = _ghost.y - height + _moveSpanY - TOLERANCE;
-				/*
+				
 				var scaleY:Float = 1;
-				for (yTest in -height...0) {
-					if (world.collidePoint("solid", x, y-yTest) != null) {
-						var length = height-(-yTest);
+				var yTest = height;
+				while (yTest > 0) {
+					yTest -= 10;
+					if (world.collidePoint("solid", x, y+yTest) != null) {
+						var length = height-(yTest);
 						scaleY = length / height;
 						height = length;
-						y = y - yTest;
+						y = y + yTest;
 						break;
 					}
 				}
 				canvasV.scaleY = scaleY;
-				*/
+				
 				graphic = canvasV;
 				
 			case Direction.Down:
@@ -77,9 +79,11 @@ class Vision extends Entity
 				height = Math.ceil(_detectionDistance * _moveSpanY);
 				x = _ghost.x + TOLERANCE;
 				y = _ghost.y + TOLERANCE;
-				/*
+				
 				var scaleY:Float = 1;
-				for (yTest in 0...height) {
+				var yTest = 0;
+				while (yTest < height) {
+					yTest += 10;
 					if (world.collidePoint("solid", x, y+yTest) != null) {
 						var length = yTest;
 						scaleY = length / height;
@@ -88,7 +92,7 @@ class Vision extends Entity
 					}
 				}
 				canvasV.scaleY = scaleY;
-				*/
+				
 				graphic = canvasV;
 			case Direction.Left:
 				width = Math.ceil(_detectionDistance * _moveSpanX);
@@ -96,7 +100,19 @@ class Vision extends Entity
 				x = _ghost.x - width + _moveSpanX - TOLERANCE;
 				y = _ghost.y + TOLERANCE;
 				
-				
+				var scaleX:Float = 1;
+				var xTest = width;
+				while (xTest > 0) {
+					xTest -= 10;
+					if (world.collidePoint("solid", x+xTest, y) != null) {
+						var length = width-(xTest);
+						scaleX = length / width;
+						width = length;
+						x = x + xTest;
+						break;
+					}
+				}
+				canvasH.scaleX = scaleX;
 				
 				graphic = canvasH;
 			case Direction.Right:
@@ -105,7 +121,20 @@ class Vision extends Entity
 				x = _ghost.x + TOLERANCE;
 				y = _ghost.y + TOLERANCE;
 				
-				
+				var scaleX:Float = 1;
+				var xTest = 0;
+				while (xTest < width) {
+					xTest += 10;
+					if (xTest%10 == 0) {
+						if (world.collidePoint("solid", x + xTest, y) != null) {
+							var length = xTest;
+							scaleX = length / width;
+							width = length;
+							break;
+						}
+					}
+				}
+				canvasH.scaleX = scaleX;
 				
 				graphic = canvasH;
 		}

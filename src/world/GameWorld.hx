@@ -77,6 +77,7 @@ class GameWorld extends Scene
 	private var gameEnd:Bool = false;
 	
 	private var xmlDebugContent:String;
+	var tiles:TmxEntity;
 
 	public function new(xmlContent:String = null )
 	{
@@ -176,6 +177,10 @@ class GameWorld extends Scene
 
 	private function nextTurn()
 	{
+		// aimante le héro sur la grille
+		hero.x = Math.round(hero.x / 20) * 20 + tiles.x;
+		hero.y = Math.round(hero.y / 20) * 20 + tiles.y;
+				
 		// condition de fin
 		if (hero.collide("vision", hero.x, hero.y) != null) {
 			gameEnd = true;
@@ -238,7 +243,6 @@ class GameWorld extends Scene
 		chrono.size = 48;
 	
 		// afficher le niveau (grille)
-		var tiles:TmxEntity ;
 		if (xmlDebugContent != null) {
 			tiles = new TmxEntity( new TmxMap(xmlDebugContent));
 		}else {
