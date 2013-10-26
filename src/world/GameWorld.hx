@@ -2,6 +2,7 @@ package world;
 import com.haxepunk.Entity;
 import com.haxepunk.gui.Label;
 import com.haxepunk.HXP;
+import com.haxepunk.masks.Hitbox;
 import com.haxepunk.Scene;
 import com.haxepunk.tmx.TmxEntity;
 import com.haxepunk.tmx.TmxLayer;
@@ -10,6 +11,7 @@ import com.haxepunk.tmx.TmxObjectGroup;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 import openfl.Assets;
+import utopiales2013.Ghost;
 import utopiales2013.Hero;
 
 /**
@@ -37,9 +39,13 @@ class GameWorld extends Scene
 {
 	public static var instance:Scene ;
 
-	private static var TURNS_PER_RUN:Int = 10 ;
-	private static var TURN_DURATION:Int = 500 ; // duration of a turn
+	private static var TURNS_PER_RUN:Int = 20 ;
+	private static var TURN_DURATION:Int = 250 ; // duration of a turn in ms
+	private static var DETECTION_DISTANCE:Int = 4 ; // vision en cases des ghosts (inclus la case du ghost lui même)
 	
+	private var moveSpanX:Float ;
+	private var moveSpanY:Float ;
+
 	private var hero : Hero ;
 	private var chrono:Label;
 	
@@ -66,37 +72,10 @@ class GameWorld extends Scene
 		if (Input.pressed(Key.ESCAPE)) {
 			HXP.scene = WelcomeWorld.instance;
 		}
-		
-		var move = false;
-		if (Input.check("up")) {
-			hero.move(Direction.Up);
-			move = true;
-		}
-		else if (Input.check("down")) {
-			hero.move(Direction.Down);
-			move = true;
-		}
-		else if (Input.check("left")) {
-			hero.move(Direction.Left);
-			move = true;
-		}
-		else if (Input.check("right")) {
-			hero.move(Direction.Right);
-			move = true;
-		}
-		if (!move) {
-			hero.stop();
-		}
 
 		inTime += Std.int( 1000/HXP.frameRate );
 
-		// turn advancement
-		if( inTime > TURN_DURATION )
-		{
-			
-			nextTurn() ;
-		}
-
+		
 		// pilot ghosts
 		for( r in runs )
 		{
@@ -104,10 +83,20 @@ class GameWorld extends Scene
 			var nextFrame = r.record.get( turn + 1 ) ;
 			var interX = prevFrame.x + ( nextFrame.x - prevFrame.x ) * ( inTime / TURN_DURATION ) ;
 			var interY = prevFrame.y + ( nextFrame.y - prevFrame.y ) * ( inTime / TURN_DURATION ) ;
-			r.ghost.x = interX ;
-			r.ghost.y = interY ;
+			//r.ghost.x = interX ;
+			//r.ghost.y = interY ;
+			r.ghost.x = prevFrame.x ;
+			r.ghost.y = prevFrame.y ;
+			
+			
+			
 		}
-		var runDuration = (TURNS_PER_RUN * TURN_DURATION);
+		// turn advancement
+		if( inTime > TURN_DURATION )
+		{
+			
+			nextTurn() ;
+		}		var runDuration = (TURNS_PER_RUN * TURN_DURATION);
 		var remainingTime:Float = Math.ceil((runDuration - turn * TURN_DURATION) / 1000);
 		var remainingTimeStr:String = Std.string(remainingTime);
 		if (remainingTimeStr.indexOf(".") < 0) {
@@ -126,9 +115,30 @@ class GameWorld extends Scene
 	{
 
 		++turn ;
-		inTime = 0 ;
+		inTime = inTime % TURN_DURATION ;
 
 		record() ;
+
+		var move = false;
+		if (Input.check("up")) {
+			hero.move(Direction.Up, moveSpanY);
+			move = true;
+		}
+		else if (Input.check("down")) {
+			hero.move(Direction.Down, moveSpanY);
+			move = true;
+		}
+		else if (Input.check("left")) {
+			hero.move(Direction.Left, moveSpanX);
+			move = true;
+		}
+		else if (Input.check("right")) {
+			hero.move(Direction.Right, moveSpanX);
+			move = true;
+		}
+		if (!move) {
+			hero.stop();
+		}
 
 		if( turn >= TURNS_PER_RUN )
 			timeJump() ;
@@ -149,6 +159,10 @@ class GameWorld extends Scene
 		// afficher le niveau (grille)
 		var tiles = new TmxEntity( "map/test.tmx" );
 		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
+		moveSpanX = tiles.map.tileHeight ;
+		moveSpanY = tiles.map.tileWidth ;
+		var gridWidth = 10;
+		var gridHeight = 10;
 		tiles.y = HXP.screen.height / 2 - tiles.map.fullHeight / 2;
 		tiles.x = HXP.screen.width / 2 - tiles.map.fullWidth / 2;
 		
@@ -200,16 +214,13 @@ class GameWorld extends Scene
 
 	private function timeJump()
 	{
-		trace("time jump") ;
-		currentRun.ghost = new Hero() ;
+		currentRun.ghost = new Ghost(DETECTION_DISTANCE, moveSpanX, moveSpanY) ;
 		add(currentRun.ghost) ;
 		runs.add( currentRun ) ;
 		currentRun = {
 			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ],
 			ghost : null
-		} ;
-		
-		// remove ghosts and create new ones
+		}
 		turn = 0 ;
 		inTime = 0 ;
 	}
