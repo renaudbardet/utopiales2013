@@ -15,6 +15,7 @@ import com.haxepunk.tmx.TmxObject;
 import com.haxepunk.tmx.TmxObjectGroup;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
+import com.haxepunk.World;
 import flash.display.Loader;
 import flash.events.Event;
 import flash.geom.Point;
@@ -46,7 +47,7 @@ typedef Run =  {
 	ghost:Ghost
 }
 
-class GameWorld extends Scene
+class GameWorld extends World
 {
 	public static var instance:Scene ;
 	
@@ -81,6 +82,7 @@ class GameWorld extends Scene
 	private var currentPieces:List<Entity> ;
 	
 	private var gameEnd:Bool = false;
+	private var updateInit:Bool = false;
 	
 	private var xmlDebugContent:String;
 
@@ -98,6 +100,12 @@ class GameWorld extends Scene
 	override public function update()
 	{
 		super.update();
+		
+		if (!updateInit) {
+			updateInit = true;
+			spawnPiece() ;
+			spawnPiece() ;
+		}
 		
 		if (Input.pressed(Key.ESCAPE)) {
 			HXP.scene = new GameWorld(xmlDebugContent);
@@ -164,10 +172,6 @@ class GameWorld extends Scene
 		var runDuration = (TURNS_PER_RUN * TURN_DURATION);
 		var remainingTime:Float = Math.ceil((runDuration - turn * TURN_DURATION) / 1000);
 		var remainingTimeStr:String = Std.string(remainingTime);
-		if (remainingTimeStr.indexOf(".") < 0) {
-			remainingTimeStr = remainingTimeStr + ".0";
-		}
-		trace(remainingTimeStr);
 		chrono.text = Std.string(remainingTime);
 		if (remainingTime > 3) {
 			chrono.color = 0xFFFFFF;
@@ -186,8 +190,6 @@ class GameWorld extends Scene
 		if (hero.collide("vision", hero.x, hero.y) != null) {
 			gameEnd = true;
 			add(gameover);
-			
-			trace("the end");
 		}
 		
 		if(!gameEnd){
@@ -306,8 +308,6 @@ class GameWorld extends Scene
 		currentMove = None ;
 		
 		currentPieces = new List() ;
-		spawnPiece() ;
-		spawnPiece() ;
 
 		#if debug
 			// test dynamic de niveaux
@@ -319,7 +319,7 @@ class GameWorld extends Scene
 				var myLoader:URLLoader = new URLLoader();
 				var request:URLRequest = new URLRequest(inputText.text);
 				myLoader.addEventListener(Event.COMPLETE, function(e) {
-					HXP.world = new GameWorld(cast(myLoader.data));
+					HXP.scene = new GameWorld(cast(myLoader.data));
 				});
 				myLoader.load(request);
 			});
@@ -365,23 +365,24 @@ class GameWorld extends Scene
 		excluders.push( hero ) ;
 
 		var spawnX, spawnY ;
+		var isValidPosition = true;
 		do{
 
 			spawnX = tiles.x + Std.int( Math.random() * gridWidth )*moveSpanX ;
 			spawnY = tiles.y + Std.int( Math.random() * gridHeight )*moveSpanY ;
 
-			for( ex in excluders )
-			{
-				if(	( spawnX < ex.x && spawnX > ex.x - 7*moveSpanX )
-				||	( spawnX > ex.x && spawnX < ex.x + 7*moveSpanX )
-				||	( spawnY < ex.y && spawnY > ex.y - 7*moveSpanY )
-				||	( spawnY > ex.y && spawnY < ex.y + 7*moveSpanY ) )
-					continue ;
+			isValidPosition = (this.collidePoint( "solid", spawnX + moveSpanX / 2, spawnY + moveSpanY / 2 ) == null);
+			if(isValidPosition){
+				for( ex in excluders )
+				{
+					if (HXP.distance(ex.x, ex.y, spawnX,  spawnY) < 4.5 * (moveSpanX + moveSpanY) / 2) {
+						isValidPosition = false;
+						break;
+					}
+				}
 			}
 
-		} while( this.collidePoint( "solid", spawnX + moveSpanX/2, spawnY+moveSpanY/2 ) != null ) ;
-
-		trace( 'spawning at $spawnX,$spawnY') ;
+		} while ( !isValidPosition );
 
 		var piece = new Entity() ;
 		var spritemap = new Spritemap("gfx/SOLS.png", 20, 20) ;
@@ -393,6 +394,7 @@ class GameWorld extends Scene
 		piece.x = spawnX ;
 		piece.y = spawnY ;
 		piece.type = "piece" ;
+		piece.setHitbox(19, 19, -2, -2);
 
 	}
 	
