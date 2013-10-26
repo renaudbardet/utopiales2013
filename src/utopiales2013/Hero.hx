@@ -71,7 +71,7 @@ class Hero extends Entity
 	
 	public function stop()
 	{
-		/*switch (direction)
+		switch (_direction)
 		{
 			case Direction.Up:
 				_spritemap.play("up");
@@ -81,7 +81,7 @@ class Hero extends Entity
 				_spritemap.play("left");
 			case Direction.Right:
 				_spritemap.play("right");
-		}*/
+		}
 	}
 	
 	public var direction(get_direction, null):Direction;

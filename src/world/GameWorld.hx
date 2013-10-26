@@ -64,15 +64,15 @@ class GameWorld extends Scene
 			hero.move(Direction.Up);
 			move = true;
 		}
-		if (Input.check("down")) {
+		else if (Input.check("down")) {
 			hero.move(Direction.Down);
 			move = true;
 		}
-		if (Input.check("left")) {
+		else if (Input.check("left")) {
 			hero.move(Direction.Left);
 			move = true;
 		}
-		if (Input.check("right")) {
+		else if (Input.check("right")) {
 			hero.move(Direction.Right);
 			move = true;
 		}
