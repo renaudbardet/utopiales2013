@@ -1,16 +1,24 @@
 package world;
 import com.haxepunk.Entity;
+import com.haxepunk.gui.Button;
+import com.haxepunk.gui.Control;
 import com.haxepunk.gui.Label;
+import com.haxepunk.gui.TextInput;
 import com.haxepunk.HXP;
 import com.haxepunk.masks.Hitbox;
 import com.haxepunk.Scene;
 import com.haxepunk.tmx.TmxEntity;
 import com.haxepunk.tmx.TmxLayer;
+import com.haxepunk.tmx.TmxMap;
 import com.haxepunk.tmx.TmxObject;
 import com.haxepunk.tmx.TmxObjectGroup;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
+import flash.display.Loader;
+import flash.events.Event;
 import flash.geom.Point;
+import flash.net.URLLoader;
+import flash.net.URLRequest;
 import haxe.ds.Option;
 import openfl.Assets;
 import utopiales2013.Ghost;
@@ -67,9 +75,12 @@ class GameWorld extends Scene
 	
 	private var gameEnd:Bool = false;
 	
+	private var xmlDebugContent:String;
 
-	public function new()
+	public function new(xmlContent:String = null; )
 	{
+		xmlDebugContent = xmlContent;
+		
 		super();
 		
 		instance = this;
@@ -168,6 +179,8 @@ class GameWorld extends Scene
 		if (hero.collide("vision", hero.x, hero.y) != null) {
 			gameEnd = true;
 			add(gameover);
+			
+			trace("the end");
 		}
 		
 		if(!gameEnd){
@@ -176,32 +189,33 @@ class GameWorld extends Scene
 
 			record() ;
 
-		currentMove = None ;
-		if (Input.check("up"))
-			if( hero.collide("solid", hero.x, hero.y - moveSpanY) == null )
-				currentMove = Some(Up) ;
-			else
-				hero.play( Up, false ) ;
-		else if (Input.check("down") )
-			if( hero.collide("solid", hero.x, hero.y + moveSpanY) == null )
-				currentMove = Some(Down) ;
-			else
-				hero.play( Down, false ) ;
-		else if (Input.check("left") )
-			if( hero.collide("solid", hero.x - moveSpanX, hero.y) == null )
-				currentMove = Some(Left) ;
-			else
-				hero.play( Left, false ) ;
-		else if (Input.check("right") )
-			if( hero.collide("solid", hero.x + moveSpanX, hero.y) == null )
-				currentMove = Some(Right) ;
-			else
-				hero.play( Right, false ) ;
+			currentMove = None ;
+			if (Input.check("up"))
+				if( hero.collide("solid", hero.x, hero.y - moveSpanY) == null )
+					currentMove = Some(Up) ;
+				else
+					hero.play( Up, false ) ;
+			else if (Input.check("down") )
+				if( hero.collide("solid", hero.x, hero.y + moveSpanY) == null )
+					currentMove = Some(Down) ;
+				else
+					hero.play( Down, false ) ;
+			else if (Input.check("left") )
+				if( hero.collide("solid", hero.x - moveSpanX, hero.y) == null )
+					currentMove = Some(Left) ;
+				else
+					hero.play( Left, false ) ;
+			else if (Input.check("right") )
+				if( hero.collide("solid", hero.x + moveSpanX, hero.y) == null )
+					currentMove = Some(Right) ;
+				else
+					hero.play( Right, false ) ;
 
-		record() ;
+			record() ;
 
-		if( turn >= TURNS_PER_RUN )
-			timeJump() ;
+			if( turn >= TURNS_PER_RUN )
+				timeJump() ;
+		}
 
 	}
 	
@@ -209,8 +223,11 @@ class GameWorld extends Scene
 	{
 		// création des objets du niveau
 		hero = new Hero();
+		Label.defaultFont = openfl.Assets.getFont("font/pf_ronda_seven.ttf");
 		chrono = new Label();
 		gameover = new Label("Paradoxe !");
+		gameover.size = 96;
+		gameover.color = 0x000000;
 		gameover.x = HXP.screen.width / 2 - gameover.width / 2;
 		gameover.y = HXP.screen.height / 2 - gameover.height / 2;
 		
@@ -220,7 +237,13 @@ class GameWorld extends Scene
 		chrono.size = 48;
 	
 		// afficher le niveau (grille)
-		var tiles = new TmxEntity( "map/test.tmx" );
+		var tiles:TmxEntity ;
+		if (xmlDebugContent != null) {
+			tiles = new TmxEntity( new TmxMap(xmlDebugContent));
+		}else {
+			tiles = new TmxEntity( "map/test.tmx" );
+		}
+		
 		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
 		moveSpanX = tiles.map.tileHeight ;
 		moveSpanY = tiles.map.tileWidth ;
@@ -275,6 +298,20 @@ class GameWorld extends Scene
 			ghost : null
 		} ;
 		currentMove = None ;
+		
+		#if debug
+			// test dynamic de niveaux
+			var inputText:TextInput = new TextInput("", 0, 610, 200, 30);
+			var bLoad:Button = new Button("Charger", 210, 610, 50, 30);
+			add(inputText)
+			add(bLoad);
+			bLoad.addEventListener(Button.CLICKED, function() {
+				var myLoader:URLLoader = new URLLoader();
+				myLoader.contentLoaderInfo.addEventListener(Event.INIT, function(e) {
+					HXP.world = new GameWorld(cast(myLoader.data));
+				});
+			});
+		#endif
 		
 		super.begin();
 	}
