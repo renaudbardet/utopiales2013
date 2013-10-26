@@ -28,21 +28,23 @@ typedef RecordFrame = {
 }
 
 typedef Run =  {
-	record : Map<Int,RecordFrame>
+	record : Map<Int,RecordFrame>,
+	ghost:Hero
 }
 
 class GameWorld extends Scene
 {
 	public static var instance:Scene ;
 
-	private static var TIME_TO_RESET:Int = 10000 ; // time before the jump, in ms
-	private static var RECORD_FRAME_RATE = 250 ; // ms between two snapshots
+	private static var TURNS_PER_RUN:Int = 5 ;
+	private static var TURN_DURATION:Int = 1000 ; // duration of a turn
 	
-	private var hero:Hero;
+	private var hero : Hero ;
 	private var runs : List<Run> ;
 	private var currentRun : Run ;
 
-	private var time : Int ; // the ingame time in ms, gets reseted every xx seconds
+	private var turn : Int ; // turn in the current run
+	private var inTime : Int ; // ms since turn start
 
 	public function new()
 	{
@@ -66,15 +68,15 @@ class GameWorld extends Scene
 			hero.move(Direction.Up);
 			move = true;
 		}
-		if (Input.check("down")) {
+		else if (Input.check("down")) {
 			hero.move(Direction.Down);
 			move = true;
 		}
-		if (Input.check("left")) {
+		else if (Input.check("left")) {
 			hero.move(Direction.Left);
 			move = true;
 		}
-		if (Input.check("right")) {
+		else if (Input.check("right")) {
 			hero.move(Direction.Right);
 			move = true;
 		}
@@ -82,39 +84,38 @@ class GameWorld extends Scene
 			hero.stop();
 		}
 
-		var elapsed = Std.int( 1000/HXP.frameRate );
+		inTime += Std.int( 1000/HXP.frameRate );
 
-		// if we have reach a new recordFrame, record
-		if( Math.floor(time / 250) < Math.floor(time + elapsed / 250) )
-			record() ;
+		// turn advancement
+		if( inTime > TURN_DURATION )
+		{
+			
+			nextTurn() ;
+		}
 
-		time += elapsed ;
-
-		if( time >= TIME_TO_RESET )
-			timeJump() ;
-
-		// dump records
+		// pilot ghosts
 		for( r in runs )
 		{
-			var prevRecTime :Int = 0 ;
-			var nextRecTime :Int = 0 ;
-			for( ts in r.record.keys() )
-			{
-				if( ts < time )
-					prevRecTime = ts ;
-				else{
-					nextRecTime = ts ;
-					break ;
-				}
-			}
-			var interval = nextRecTime - prevRecTime ;
-			var timeIn = time - prevRecTime ;
-			var prevFrame = r.record.get( prevRecTime ) ;
-			var nextFrame = r.record.get( nextRecTime ) ;
-			var interX = prevFrame.x + ( nextFrame.x - prevFrame.x ) * ( timeIn / interval ) ;
-			var interY = prevFrame.y + ( nextFrame.y - prevFrame.y ) * ( timeIn / interval ) ;
-			trace( '{ x : $interX, y :  $interY }' ) ;
+			var prevFrame = r.record.get( turn ) ;
+			var nextFrame = r.record.get( turn + 1 ) ;
+			var interX = prevFrame.x + ( nextFrame.x - prevFrame.x ) * ( inTime / TURN_DURATION ) ;
+			var interY = prevFrame.y + ( nextFrame.y - prevFrame.y ) * ( inTime / TURN_DURATION ) ;
+			r.ghost.x = interX ;
+			r.ghost.y = interY ;
 		}
+
+	}
+
+	private function nextTurn()
+	{
+
+		++turn ;
+		inTime = 0 ;
+
+		record() ;
+
+		if( turn >= TURNS_PER_RUN )
+			timeJump() ;
 
 	}
 	
@@ -167,7 +168,8 @@ class GameWorld extends Scene
 		//hero.layer
 
 		currentRun = {
-			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ]
+			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ],
+			ghost : null
 		} ;
 		
 		super.begin();
@@ -176,19 +178,23 @@ class GameWorld extends Scene
 	private function timeJump()
 	{
 		trace("time jump") ;
+		currentRun.ghost = new Hero() ;
+		add(currentRun.ghost) ;
 		runs.add( currentRun ) ;
 		currentRun = {
-			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ]
+			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ],
+			ghost : null
 		} ;
 		// remove ghosts and create new ones
-		time = 0 ;
+		turn = 0 ;
+		inTime = 0 ;
 	}
 
 	// called every .25s or so to record the current pos of the hero in the current run
 	private function record()
 	{
 		currentRun.record.set(
-			time,
+			turn,
 			{
 				x : hero.x,
 				y : hero.y,
