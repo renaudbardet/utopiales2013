@@ -1,6 +1,8 @@
 package world;
 import com.haxepunk.Entity;
+import com.haxepunk.gui.Label;
 import com.haxepunk.HXP;
+import com.haxepunk.masks.Hitbox;
 import com.haxepunk.Scene;
 import com.haxepunk.tmx.TmxEntity;
 import com.haxepunk.tmx.TmxLayer;
@@ -8,7 +10,10 @@ import com.haxepunk.tmx.TmxObject;
 import com.haxepunk.tmx.TmxObjectGroup;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
+import flash.geom.Point;
+import haxe.ds.Option;
 import openfl.Assets;
+import utopiales2013.Ghost;
 import utopiales2013.Hero;
 
 /**
@@ -28,27 +33,38 @@ typedef RecordFrame = {
 }
 
 typedef Run =  {
-	record : Map<Int,RecordFrame>
+	record : Map<Int,RecordFrame>,
+	ghost:Ghost
 }
 
 class GameWorld extends Scene
 {
 	public static var instance:Scene ;
 
-	private static var TIME_TO_RESET:Int = 10000 ; // time before the jump, in ms
-	private static var RECORD_FRAME_RATE = 250 ; // ms between two snapshots
+	private static var TURNS_PER_RUN:Int = 20 ;
+	private static var TURN_DURATION:Int = 250 ; // duration of a turn in ms
+	private static var DETECTION_DISTANCE:Int = 4 ; // vision en cases des ghosts (inclus la case du ghost lui même)
 	
-	private var hero:Hero;
+	private var moveSpanX:Float ;
+	private var moveSpanY:Float ;
+
+	private var hero : Hero ;
+	private var chrono:Label;
+	
 	private var runs : List<Run> ;
 	private var currentRun : Run ;
 
-	private var time : Int ; // the ingame time in ms, gets reseted every xx seconds
+	private var turn : Int ; // turn in the current run
+	private var inTime : Int ; // ms since turn start
+	private var currentMove : Option<Direction> ;
 
 	public function new()
 	{
 		super();
 		
 		instance = this;
+
+		runs = new List() ;
 	}
 
 	override public function update()
@@ -58,37 +74,94 @@ class GameWorld extends Scene
 		if (Input.pressed(Key.ESCAPE)) {
 			HXP.scene = WelcomeWorld.instance;
 		}
-		
-		var move = false;
-		if (Input.check("up")) {
-			hero.move(Direction.Up);
-			move = true;
-		}
-		if (Input.check("down")) {
-			hero.move(Direction.Down);
-			move = true;
-		}
-		if (Input.check("left")) {
-			hero.move(Direction.Left);
-			move = true;
-		}
-		if (Input.check("right")) {
-			hero.move(Direction.Right);
-			move = true;
-		}
-		if (!move) {
-			hero.stop();
-		}
 
-		var elapsed = Std.int( 1000/HXP.frameRate );
+		inTime += Std.int( 1000/HXP.frameRate );
 
-		// if we have reach a new recordFrame, record
-		if( Math.floor(time / 250) < Math.floor(time + elapsed / 250) )
-			record() ;
+		// interpolate hero position
+		var prevFrame = currentRun.record.get(turn) ;
+		var nextX = prevFrame.x ;
+		var nextY = prevFrame.y ;
+		var currentDir = Up ;
+		var isMoving = true ;
+		switch ( currentMove ) {
+			case None:
+				currentDir = prevFrame.dir ;
+				isMoving = false ;
+			case Some( Up )		:
+				nextY -= moveSpanY ;
+				currentDir = Up ;
+			case Some( Down )	:
+				nextY += moveSpanY ;
+				currentDir = Down ;
+			case Some( Left )	:
+				nextX -= moveSpanX ;
+				currentDir = Left ;
+			case Some( Right )	:
+				nextX += moveSpanX ;
+				currentDir = Right ;
+		}
+		hero.x = moveTween( inTime, TURN_DURATION, prevFrame.x, nextX ) ;
+		hero.y = moveTween( inTime, TURN_DURATION, prevFrame.y, nextY ) ;
+		hero.play( currentDir, isMoving ) ;
 
-		time += elapsed ;
+		// pilot ghosts
+		for( r in runs )
+		{
+			prevFrame = r.record.get( turn ) ;
+			var nextFrame = r.record.get( turn + 1 ) ;
+			r.ghost.x = moveTween( inTime, TURN_DURATION, prevFrame.x, nextFrame.x ) ;
+			r.ghost.y = moveTween( inTime, TURN_DURATION, prevFrame.y, nextFrame.y ) ;
+			r.ghost.play( nextFrame.dir, prevFrame.x != nextFrame.x || prevFrame.y != nextFrame.y ) ;
+		}
+		// turn advancement
+		if( inTime > TURN_DURATION )
+			nextTurn() ;
+		var runDuration = (TURNS_PER_RUN * TURN_DURATION);
+		var remainingTime:Float = Math.ceil((runDuration - turn * TURN_DURATION) / 1000);
+		var remainingTimeStr:String = Std.string(remainingTime);
+		if (remainingTimeStr.indexOf(".") < 0) {
+			remainingTimeStr = remainingTimeStr + ".0";
+		}
+		trace(remainingTimeStr);
+		chrono.text = Std.string(remainingTime);
+		if (remainingTime > 3) {
+			chrono.color = 0xFFFFFF;
+		} else {
+			chrono.color = 0xFF3E3E;
+		}
+	}
 
-		if( time >= TIME_TO_RESET )
+	private function nextTurn()
+	{
+
+		++turn ;
+		inTime = inTime % TURN_DURATION ;
+
+		currentMove = None ;
+		if (Input.check("up"))
+			if( hero.collide("solid", hero.x, hero.y - moveSpanY) == null )
+				currentMove = Some(Up) ;
+			else
+				hero.play( Up, false ) ;
+		else if (Input.check("down") )
+			if( hero.collide("solid", hero.x, hero.y + moveSpanY) == null )
+				currentMove = Some(Down) ;
+			else
+				hero.play( Down, false ) ;
+		else if (Input.check("left") )
+			if( hero.collide("solid", hero.x - moveSpanX, hero.y) == null )
+				currentMove = Some(Left) ;
+			else
+				hero.play( Left, false ) ;
+		else if (Input.check("right") )
+			if( hero.collide("solid", hero.x + moveSpanX, hero.y) == null )
+				currentMove = Some(Right) ;
+			else
+				hero.play( Right, false ) ;
+
+		record() ;
+
+		if( turn >= TURNS_PER_RUN )
 			timeJump() ;
 
 	}
@@ -97,24 +170,36 @@ class GameWorld extends Scene
 	{
 		// création des objets du niveau
 		hero = new Hero();
+		chrono = new Label();
+		
+		// positionnemetn des élements d'interface
+		chrono.x = Math.round(HXP.screen.width/2 - 20);
+		chrono.y = 5;
+		chrono.size = 48;
 	
 		// afficher le niveau (grille)
 		var tiles = new TmxEntity( "map/test.tmx" );
 		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
+		moveSpanX = tiles.map.tileHeight ;
+		moveSpanY = tiles.map.tileWidth ;
 		var gridWidth = 10;
 		var gridHeight = 10;
+		tiles.y = HXP.screen.height / 2 - tiles.map.fullHeight / 2;
+		tiles.x = HXP.screen.width / 2 - tiles.map.fullWidth / 2;
 		
 		// collisions de la map
 		tiles.loadMask("tiles", "solid", [0]);
 		
 		// générer la grille depuis le niveau
+		var gridWidth = tiles.map.width;
+		var gridHeight = tiles.map.height;
 		var grid:Array<Array<CellType>> = new Array<Array<CellType>>();
 		var layer:TmxLayer = tiles.map.getLayer("tiles");
 		for (yCell in 0...gridHeight) {
 			var row = new Array<CellType>();
 			grid.push(row);
 			for (xCell in 0...gridWidth) {
-				var iTile = layer.tileGIDs[xCell][yCell];
+				var iTile = layer.tileGIDs[yCell][xCell];
 				row.push(
 					switch (iTile)
 					{
@@ -138,31 +223,35 @@ class GameWorld extends Scene
 		
 		add(tiles);
 		add(hero);
-		
-		//hero.layer
+		add(chrono);
 
 		currentRun = {
-			record : new Map<Int,RecordFrame>()
+			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ],
+			ghost : null
 		} ;
+		currentMove = None ;
 		
 		super.begin();
 	}
 
 	private function timeJump()
 	{
-/*		runs.add( currentRun ) ;
+		currentRun.ghost = new Ghost(DETECTION_DISTANCE, moveSpanX, moveSpanY) ;
+		add(currentRun.ghost) ;
+		runs.add( currentRun ) ;
 		currentRun = {
-			record : new Map<Int,RecordFrame>()
-		} ;
-		// remove ghosts and create new ones
-		time = 0 ;*/
+			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ],
+			ghost : null
+		}
+		turn = 0 ;
+		inTime = 0 ;
 	}
 
 	// called every .25s or so to record the current pos of the hero in the current run
 	private function record()
 	{
 		currentRun.record.set(
-			time,
+			turn,
 			{
 				x : hero.x,
 				y : hero.y,
@@ -175,6 +264,19 @@ class GameWorld extends Scene
 	{
 		removeAll();
 		super.end();
+	}
+
+	private static function moveTween( inTime:Float, totalTime:Float, tweenStart:Float, tweenEnd:Float ):Float
+	{
+		var t = inTime ;
+		var b = tweenStart ;
+		var c = tweenEnd - tweenStart ;
+		var d = totalTime ;
+
+		t /= d/2;
+		if (t < 1) return c/2*t*t + b;
+		t--;
+		return -c/2 * (t*(t-2) - 1) + b;
 	}
 	
 }

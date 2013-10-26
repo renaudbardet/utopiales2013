@@ -1,6 +1,7 @@
 package utopiales2013;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Spritemap;
+import flash.geom.Point;
 import utopiales2013.Hero.Direction;
 
 enum Direction {
@@ -16,29 +17,29 @@ enum Direction {
  */
 class Hero extends Entity
 {
-	public var speed:Float = 3; // px/tick
-	
-	
 	private var _spritemap:Spritemap;
 	private var _direction:Direction;
+	var _directionPoint:Point;
 
 	public function new()
 	{
-		_spritemap = new Spritemap("gfx/hero.png", 20, 30);
-		_spritemap.add("up", [0], 5);
-		_spritemap.add("down", [3], 5);
-		_spritemap.add("left", [6], 5);
-		_spritemap.add("right",  [9], 5);
-		_spritemap.add("moveup", [0, 1, 2, 1], 5);
-		_spritemap.add("movedown", [3, 4, 5, 4], 5);
-		_spritemap.add("moveleft", [6, 7, 8, 7], 5);
-		_spritemap.add("moveright",  [9, 10, 11, 10], 5);
+		_spritemap = new Spritemap("gfx/heros.png", 20, 30);
+		_spritemap.add("right", [0], 5);
+		_spritemap.add("left", [4], 5);
+		_spritemap.add("up", [9], 5);
+		_spritemap.add("down",  [14], 5);
+		_spritemap.add("moveright", [0, 1, 2, 3, 2, 1], 5);
+		_spritemap.add("moveleft", [4, 5, 6, 7, 6 , 5], 5);
+		_spritemap.add("moveup", [8, 9, 10, 11, 10, 9], 5);
+		_spritemap.add("movedown",  [12, 13, 14, 15, 14 ,13], 5);
 		_spritemap.y = -10;
 		graphic = _spritemap;
 		_spritemap.play("down");
 		_spritemap.frame = 1;
 		_direction = Direction.Down;
 		collidable = true;
+		
+		_directionPoint = new Point(0,1);
 		
 		super() ;
 		
@@ -50,38 +51,70 @@ class Hero extends Entity
 		super.update();
 	}
 	
-	public function move(direction:Direction) {
+	/**
+	 * Change la directio ndu héro et l'animation correspondante
+	 * @param	direction
+	 * @param	isMoving
+	 */
+	public function play(direction:Direction, isMoving:Bool) {
 		_direction = direction;
 		switch (direction)
 		{
 			case Direction.Up:
-				moveBy( 0, -speed, "solid");
-				_spritemap.play("moveup");
+				if (isMoving) {
+					_spritemap.play("moveup");
+				} else {
+					_spritemap.play("up");
+				}
+				
 			case Direction.Down:
-				moveBy( 0, speed, "solid");
-				_spritemap.play("movedown");
+				if (isMoving) {
+					_spritemap.play("movedown");
+				} else {
+					_spritemap.play("down");
+				}
 			case Direction.Left:
-				moveBy( -speed, 0, "solid");
-				_spritemap.play("moveleft");
+				if (isMoving) {
+					_spritemap.play("moveleft");
+				} else {
+					_spritemap.play("left");
+				}
 			case Direction.Right:
-				moveBy( speed, 0, "solid");
-				_spritemap.play("moveright");
+				if (isMoving) {
+					_spritemap.play("moveright");
+				} else {
+					_spritemap.play("right");
+				}
 		}
 	}
 	
-	public function stop()
-	{
-		/*switch (direction)
+	/**
+	 * Déplace le héro en tenant compte des collisions, change son animation si besoin
+	 * @param	direction
+	 * @param	speed
+	 */
+	public function move(direction:Direction, speed:Float) {
+
+		play(direction, true);
+		switch (direction)
 		{
 			case Direction.Up:
-				_spritemap.play("up");
+				moveBy( 0, -speed, "solid");
 			case Direction.Down:
-				_spritemap.play("down");
+				moveBy( 0, speed, "solid");
 			case Direction.Left:
-				_spritemap.play("left");
+				moveBy( -speed, 0, "solid");
 			case Direction.Right:
-				_spritemap.play("right");
-		}*/
+				moveBy( speed, 0, "solid");
+		}
+	}
+	
+	/**
+	 * Arrête l'animation du héro
+	 */
+	public function stop()
+	{
+		play(direction, false);
 	}
 	
 	public var direction(get_direction, null):Direction;
@@ -89,4 +122,25 @@ class Hero extends Entity
 		return _direction;
 	}
 	
+	public var directionPoint(get_directionPoint, null):Point;
+	function get_directionPoint():Point
+	{
+		switch (_direction)
+		{
+			case Direction.Up:
+				_directionPoint.x = 0;
+				_directionPoint.y = -1;
+			case Direction.Down:
+				_directionPoint.x = 0;
+				_directionPoint.y = 1;
+			case Direction.Left:
+				_directionPoint.x = -1;
+				_directionPoint.y = 0;
+			case Direction.Right:
+				_directionPoint.x = 1;
+				_directionPoint.y = 0;
+		}
+		return _directionPoint;
+	}
+
 }
