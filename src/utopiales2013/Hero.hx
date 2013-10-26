@@ -16,9 +16,6 @@ enum Direction {
  */
 class Hero extends Entity
 {
-	public var speed:Float = 2; // px/tick
-	
-	
 	private var _spritemap:Spritemap;
 	private var _direction:Direction;
 
@@ -50,7 +47,7 @@ class Hero extends Entity
 		super.update();
 	}
 	
-	public function move(direction:Direction) {
+	public function move(direction:Direction, speed:Float) {
 		_direction = direction;
 		switch (direction)
 		{

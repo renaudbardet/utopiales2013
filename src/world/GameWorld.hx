@@ -36,9 +36,12 @@ class GameWorld extends Scene
 {
 	public static var instance:Scene ;
 
-	private static var TURNS_PER_RUN:Int = 5 ;
-	private static var TURN_DURATION:Int = 1000 ; // duration of a turn
+	private static var TURNS_PER_RUN:Int = 20 ;
+	private static var TURN_DURATION:Int = 250 ; // duration of a turn
 	
+	private var moveSpanX:Float ;
+	private var moveSpanY:Float ;
+
 	private var hero : Hero ;
 	private var runs : List<Run> ;
 	private var currentRun : Run ;
@@ -62,36 +65,8 @@ class GameWorld extends Scene
 		if (Input.pressed(Key.ESCAPE)) {
 			HXP.scene = WelcomeWorld.instance;
 		}
-		
-		var move = false;
-		if (Input.check("up")) {
-			hero.move(Direction.Up);
-			move = true;
-		}
-		else if (Input.check("down")) {
-			hero.move(Direction.Down);
-			move = true;
-		}
-		else if (Input.check("left")) {
-			hero.move(Direction.Left);
-			move = true;
-		}
-		else if (Input.check("right")) {
-			hero.move(Direction.Right);
-			move = true;
-		}
-		if (!move) {
-			hero.stop();
-		}
 
 		inTime += Std.int( 1000/HXP.frameRate );
-
-		// turn advancement
-		if( inTime > TURN_DURATION )
-		{
-			
-			nextTurn() ;
-		}
 
 		// pilot ghosts
 		for( r in runs )
@@ -100,9 +75,15 @@ class GameWorld extends Scene
 			var nextFrame = r.record.get( turn + 1 ) ;
 			var interX = prevFrame.x + ( nextFrame.x - prevFrame.x ) * ( inTime / TURN_DURATION ) ;
 			var interY = prevFrame.y + ( nextFrame.y - prevFrame.y ) * ( inTime / TURN_DURATION ) ;
-			r.ghost.x = interX ;
-			r.ghost.y = interY ;
+			//r.ghost.x = interX ;
+			//r.ghost.y = interY ;
+			r.ghost.x = prevFrame.x ;
+			r.ghost.y = prevFrame.y ;
 		}
+		
+		// turn advancement
+		if( inTime > TURN_DURATION )
+			nextTurn() ;
 
 	}
 
@@ -110,9 +91,30 @@ class GameWorld extends Scene
 	{
 
 		++turn ;
-		inTime = 0 ;
+		inTime = inTime % TURN_DURATION ;
 
 		record() ;
+
+		var move = false;
+		if (Input.check("up")) {
+			hero.move(Direction.Up, moveSpanY);
+			move = true;
+		}
+		else if (Input.check("down")) {
+			hero.move(Direction.Down, moveSpanY);
+			move = true;
+		}
+		else if (Input.check("left")) {
+			hero.move(Direction.Left, moveSpanX);
+			move = true;
+		}
+		else if (Input.check("right")) {
+			hero.move(Direction.Right, moveSpanX);
+			move = true;
+		}
+		if (!move) {
+			hero.stop();
+		}
 
 		if( turn >= TURNS_PER_RUN )
 			timeJump() ;
@@ -127,6 +129,8 @@ class GameWorld extends Scene
 		// afficher le niveau (grille)
 		var tiles = new TmxEntity( "map/test.tmx" );
 		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
+		moveSpanX = tiles.map.tileHeight ;
+		moveSpanY = tiles.map.tileWidth ;
 		var gridWidth = 10;
 		var gridHeight = 10;
 		
