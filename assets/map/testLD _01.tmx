@@ -7,6 +7,6 @@
   </data>
  </layer>
  <objectgroup name="objects" width="23" height="15">
-  <object name="start" x="227" y="92"/>
+  <object name="start" x="229" y="74"/>
  </objectgroup>
 </map>
