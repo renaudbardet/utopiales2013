@@ -16,7 +16,7 @@ enum Direction {
  */
 class Hero extends Entity
 {
-	public var speed:Float = 5; // px/second
+	public var speed:Float = 3; // px/tick
 	
 	
 	private var _spritemap:Spritemap;
@@ -24,7 +24,7 @@ class Hero extends Entity
 
 	public function new()
 	{
-		_spritemap = new Spritemap("gfx/heros.png", 20, 30);
+		_spritemap = new Spritemap("gfx/hero.png", 20, 30);
 		_spritemap.add("up", [0, 1, 2, 1], 1 / 60);
 		_spritemap.add("down", [3, 4, 5, 4], 1 / 60);
 		_spritemap.add("left", [6, 7, 8, 7], 1 / 60);
@@ -32,14 +32,18 @@ class Hero extends Entity
 		_spritemap.y = -10;
 		graphic = _spritemap;
 		_spritemap.play("down");
-		_spritemap.pause();
 		_spritemap.frame = 1;
 		_direction = Direction.Down;
-		
-		height = 20;
-		width = 20;
 		collidable = true;
+		
 		super() ;
+		
+		setHitbox(20, 20, 0, 0);
+	}
+	
+	override public function update():Void
+	{
+		super.update();
 	}
 	
 	public function move(direction:Direction) {
@@ -47,18 +51,33 @@ class Hero extends Entity
 		switch (direction)
 		{
 			case Direction.Up:
-				y -= speed;
+				moveBy( 0, -speed, "solid");
+				_spritemap.play("moveup");
+			case Direction.Down:
+				moveBy( 0, speed, "solid");
+				_spritemap.play("movedown");
+			case Direction.Left:
+				moveBy( -speed, 0, "solid");
+				_spritemap.play("moveleft");
+			case Direction.Right:
+				moveBy( speed, 0, "solid");
+				_spritemap.play("moveright");
+		}
+	}
+	
+	public function stop()
+	{
+		/*switch (direction)
+		{
+			case Direction.Up:
 				_spritemap.play("up");
 			case Direction.Down:
-				y += speed;
 				_spritemap.play("down");
 			case Direction.Left:
-				x -= speed;
 				_spritemap.play("left");
 			case Direction.Right:
-				x += speed;
 				_spritemap.play("right");
-		}
+		}*/
 	}
 	
 	public var direction(get_direction, null):Direction;
