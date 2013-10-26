@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="25" height="16" tilewidth="20" tileheight="20">
+<map version="1.0" orientation="orthogonal" width="23" height="15" tilewidth="20" tileheight="20">
  <tileset firstgid="1" source="tileset.tsx"/>
- <layer name="tiles" width="25" height="16">
+ <layer name="tiles" width="23" height="15">
   <data encoding="base64" compression="zlib">
-   eJzFk0kOgDAMA0P//2juVcYZoQIHq5Wy2NlWVa2PcAGSzWDP3+UjDtLZvfR/WtPuQ30yHEkf+aVcpo6pp12Pk16awxT/Fv7gMPdj74x2wO6i8U0zNL6djfhMfUZ3urvUqykuaT6xu6ZGsx8ncQP4fgI8
+   eJy9k10OgyAQhKmtNlL/6qPRnoD7n88hgWSzWSlLgg9fNMqMODs8jDFNBZ7gDTYFLvBvXV/gnQv19nt5gRYcYAc/AtV9yP0e1ntdl9i3DbpBmY+k494L+IJV+f9Rd2TkLc0q5tUlvmELZ6nNS8r7ql/avLi3NO8cpLxSPUmdD/5O05PYb6nPHtr72G+e113nsgRHro49994jmCowgxMhxhyQ
   </data>
  </layer>
- <objectgroup name="objects" width="25" height="16">
-  <object name="start" x="430" y="232"/>
+ <objectgroup name="objects" width="23" height="15">
+  <object name="start" x="52" y="49"/>
  </objectgroup>
 </map>
