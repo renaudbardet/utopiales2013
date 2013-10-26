@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<meta title="UtopialesGameJam2013" package="fr.aucreeperdepressif.utopialesgamejam2013" version="1.0.0" company="Lythom" />
+	<meta title="UtopialesGameJam2013" package="com.V9Z6PV49HM.*" version="1.0.0" company="Renaud Bardet" />
 		
 	<app file="UtopialesGameJam2013" main="Main" path="bin" />
 		
@@ -19,7 +19,6 @@
 	<haxelib name="openfl" />
 	<!-- Main game framework used in this template -->
 	<haxelib name="HaxePunk" />
-	<haxelib name="haxepunk-gui" />
 	
 	<!-- Load pictures and animations -->
 	<assets path="assets/gfx" rename="gfx" type="image" include="*.png" />
