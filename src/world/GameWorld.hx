@@ -21,13 +21,6 @@ enum CellType {
 	Wall;
 }
 
-enum Direction {
-	Up;
-	Down;
-	Left;
-	Right;
-}
-
 typedef RecordFrame = {
 	x : Float,
 	y : Float,
@@ -56,6 +49,8 @@ class GameWorld extends Scene
 		super();
 		
 		instance = this;
+
+		runs = new List() ;
 	}
 
 	override public function update()
@@ -89,6 +84,29 @@ class GameWorld extends Scene
 
 		if( time >= TIME_TO_RESET )
 			timeJump() ;
+
+		// dump records
+		for( r in runs )
+		{
+			var prevRecTime :Int = 0 ;
+			var nextRecTime :Int = 0 ;
+			for( ts in r.record.keys() )
+			{
+				if( ts < time )
+					prevRecTime = ts ;
+				else{
+					nextRecTime = ts ;
+					break ;
+				}
+			}
+			var interval = nextRecTime - prevRecTime ;
+			var timeIn = time - prevRecTime ;
+			var prevFrame = r.record.get( prevRecTime ) ;
+			var nextFrame = r.record.get( nextRecTime ) ;
+			var interX = prevFrame.x + ( nextFrame.x - prevFrame.x ) * ( timeIn / interval ) ;
+			var interY = prevFrame.y + ( nextFrame.y - prevFrame.y ) * ( timeIn / interval ) ;
+			trace( '{ x : $interX, y :  $interY }' ) ;
+		}
 
 	}
 	
@@ -141,7 +159,7 @@ class GameWorld extends Scene
 		//hero.layer
 
 		currentRun = {
-			record : new Map<Int,RecordFrame>()
+			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ]
 		} ;
 		
 		super.begin();
@@ -149,9 +167,10 @@ class GameWorld extends Scene
 
 	private function timeJump()
 	{
+		trace("time jump") ;
 		runs.add( currentRun ) ;
 		currentRun = {
-			record : new Map<Int,RecordFrame>()
+			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ]
 		} ;
 		// remove ghosts and create new ones
 		time = 0 ;

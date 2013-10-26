@@ -24,7 +24,7 @@ class Hero extends Entity
 
 	public function new()
 	{
-		_spritemap = new Spritemap("gfx/hero.png", 20, 30);
+		_spritemap = new Spritemap("gfx/heros.png", 20, 30);
 		_spritemap.add("up", [0, 1, 2, 1], 1 / 60);
 		_spritemap.add("down", [3, 4, 5, 4], 1 / 60);
 		_spritemap.add("left", [6, 7, 8, 7], 1 / 60);
