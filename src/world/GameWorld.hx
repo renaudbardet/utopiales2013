@@ -85,7 +85,7 @@ class GameWorld extends World
 
 	private var currentPieces:List<Entity> ;
 	
-	private var waitForKey:Bool;
+	private var waitForKey:Bool = true;
 	private var gameEnd:Bool = false;
 	private var updateInit:Bool = false;
 	
@@ -191,6 +191,7 @@ class GameWorld extends World
 		// condition de fin
 		if (hero.collide("vision", hero.x, hero.y) != null) {
 			gameEnd = true;
+			stopAllAnimations();
 			add(gameover);
 		}
 		
@@ -265,6 +266,7 @@ class GameWorld extends World
 		txtWaitForKey.color = 0x000000;
 		txtWaitForKey.x = HXP.screen.width / 2 - gameover.width / 4;
 		txtWaitForKey.y = HXP.screen.height / 2 - gameover.height / 2;
+		add(txtWaitForKey);
 		scoreLabel.text = '0' ;
 		scoreLabel.color = 0xFFFFFF ;
 		scoreLabel.x = HXP.screen.width - (scoreLabel.width + 15) ;
@@ -366,19 +368,32 @@ class GameWorld extends World
 		add(currentRun.ghost.vision) ;
 		currentRun.ghost.vision.layer = LAYER_VISION;
 		
-		runs.add( currentRun ) ;
+		// remember run
+		runs.add(currentRun) ;
+		
+		// init ghost position before pausing
+		var firstRun:Run = runs.first();
+		currentRun.ghost.x = firstRun.record.get(0).x;
+		currentRun.ghost.y = firstRun.record.get(0).y;
+		currentRun.ghost.play(firstRun.record.get(0).dir, false);
+		
+		// init new run
 		currentRun = {
 			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ],
 			ghost : null
 		}
+
 		turn = 0 ;
 		inTime = 0 ;
+		
+		// stop all animations
+		stopAllAnimations();
+		
 		
 		waitForKey = true;
 		if (txtWaitForKey.world == null) {
 			add(txtWaitForKey);
 		}
-		update();
 	}
 
 	// called every .25s or so to record the current pos of the hero in the current run
@@ -461,6 +476,14 @@ class GameWorld extends World
 		if (t < 1) return c/2*t*t + b;
 		t--;
 		return -c/2 * (t*(t-2) - 1) + b;
+	}
+	
+	function stopAllAnimations():Void
+	{
+		for (r in runs) {
+			r.ghost.play(r.ghost.direction,false);
+		}
+		hero.play(hero.direction, false);
 	}
 	
 }
