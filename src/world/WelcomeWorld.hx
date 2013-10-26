@@ -84,7 +84,7 @@ class WelcomeWorld extends Scene
 		if(!WelcomeWorld.guiInitialized){
 			// The default layer where every component will be displayed on.
 			// Most components use severals layers (at least 1 per component child). A child component layer will be <100.
-			Control.defaultLayer = 100;
+			Control.defaultLayer = 20;
 			// Use this to fit your button skin's borders, set the default padding of every new Button and ToggleButton.
 			// padding attribute can be changed on instances after creation.
 			Button.defaultPadding = 4;

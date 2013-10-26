@@ -59,6 +59,7 @@ class GameWorld extends Scene
 	private static var BASE_SCORE = 10 ;
 
 	private static var LAYER_GUI:Int = 100;
+	private static var LAYER_PIECE:Int = 805;
 	private static var LAYER_HERO:Int = 800;
 	private static var LAYER_GHOST:Int = 900;
 	private static var LAYER_VISION:Int = 950;
@@ -330,8 +331,10 @@ class GameWorld extends Scene
 
 		#if debug
 			// test dynamic de niveaux
-			var inputText:TextInput = new TextInput("testLD _", 600, 0, 200, 30);
-			var bLoad:Button = new Button("Charger", 800, 0, 50, 30);
+			var inputText:TextInput = new TextInput("testLD _", 250, 0, 150, 20);
+			inputText.size = 10;
+			var bLoad:Button = new Button("Charger", 400, 0, 50, 20);
+			bLoad.size = 10;
 			add(inputText);
 			add(bLoad);
 			bLoad.addEventListener(Button.CLICKED, function(e) {
@@ -432,6 +435,7 @@ class GameWorld extends Scene
 		spritemap.add( "std", [3], 1 ) ;
 		spritemap.play("std") ;
 		piece.graphic = spritemap ;
+		piece.layer = LAYER_PIECE;
 		add(piece) ;
 
 		piece.x = spawnX ;
