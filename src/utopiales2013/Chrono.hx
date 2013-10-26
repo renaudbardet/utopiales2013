@@ -12,8 +12,13 @@ class Chrono extends Entity
 
 	public function new()
 	{
-		_text = new Text("");
+		_text = new Text("test");
 		super();
+	}
+	
+	override public function update():Void
+	{
+		super.update();
 	}
 	
 	function get_text():String
@@ -23,7 +28,9 @@ class Chrono extends Entity
 	
 	function set_text(value:String):String
 	{
-		return _text.text = value;
+		_text.text = value;
+		
+		return _text.text;
 	}
 	
 	public var text(get_text, set_text):String;

@@ -1,5 +1,6 @@
 package world;
 import com.haxepunk.Entity;
+import com.haxepunk.gui.Label;
 import com.haxepunk.HXP;
 import com.haxepunk.Scene;
 import com.haxepunk.tmx.TmxEntity;
@@ -9,7 +10,6 @@ import com.haxepunk.tmx.TmxObjectGroup;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 import openfl.Assets;
-import utopiales2013.Chrono;
 import utopiales2013.Hero;
 
 /**
@@ -37,11 +37,11 @@ class GameWorld extends Scene
 {
 	public static var instance:Scene ;
 
-	private static var TURNS_PER_RUN:Int = 5 ;
-	private static var TURN_DURATION:Int = 1000 ; // duration of a turn
+	private static var TURNS_PER_RUN:Int = 10 ;
+	private static var TURN_DURATION:Int = 500 ; // duration of a turn
 	
 	private var hero : Hero ;
-	private var chrono:Chrono;
+	private var chrono:Label;
 	
 	private var runs : List<Run> ;
 	private var currentRun : Run ;
@@ -107,9 +107,19 @@ class GameWorld extends Scene
 			r.ghost.x = interX ;
 			r.ghost.y = interY ;
 		}
-		var remainingTime = Std.string(Math.round(time * 100) / 100);
-		chrono.text = 'Time : $remainingTime' ;
-		
+		var runDuration = (TURNS_PER_RUN * TURN_DURATION);
+		var remainingTime:Float = Math.ceil((runDuration - turn * TURN_DURATION) / 1000);
+		var remainingTimeStr:String = Std.string(remainingTime);
+		if (remainingTimeStr.indexOf(".") < 0) {
+			remainingTimeStr = remainingTimeStr + ".0";
+		}
+		trace(remainingTimeStr);
+		chrono.text = Std.string(remainingTime);
+		if (remainingTime > 3) {
+			chrono.color = 0xFFFFFF;
+		} else {
+			chrono.color = 0xFF3E3E;
+		}
 	}
 
 	private function nextTurn()
@@ -129,11 +139,12 @@ class GameWorld extends Scene
 	{
 		// création des objets du niveau
 		hero = new Hero();
-		chrono = new Chrono();
+		chrono = new Label();
 		
 		// positionnemetn des élements d'interface
 		chrono.x = Math.round(HXP.screen.width/2 - 20);
 		chrono.y = 5;
+		chrono.size = 48;
 	
 		// afficher le niveau (grille)
 		var tiles = new TmxEntity( "map/test.tmx" );
@@ -196,9 +207,9 @@ class GameWorld extends Scene
 		currentRun = {
 			record : [ 0 => { x:hero.x, y:hero.y, dir:hero.direction } ],
 			ghost : null
-		} ;*/
+		} ;
+		
 		// remove ghosts and create new ones
-		time = 0 ;*/
 		turn = 0 ;
 		inTime = 0 ;
 	}
