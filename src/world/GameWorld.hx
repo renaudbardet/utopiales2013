@@ -77,12 +77,11 @@ class GameWorld extends Scene
 		{
 			var prevFrame = r.record.get( turn ) ;
 			var nextFrame = r.record.get( turn + 1 ) ;
-			var interX = prevFrame.x + ( nextFrame.x - prevFrame.x ) * ( inTime / TURN_DURATION ) ;
-			var interY = prevFrame.y + ( nextFrame.y - prevFrame.y ) * ( inTime / TURN_DURATION ) ;
-			//r.ghost.x = interX ;
-			//r.ghost.y = interY ;
-			r.ghost.x = prevFrame.x ;
-			r.ghost.y = prevFrame.y ;
+			var interX = moveTween( inTime, TURN_DURATION, prevFrame.x, nextFrame.x ) ;
+			var interY = moveTween( inTime, TURN_DURATION, prevFrame.y, nextFrame.y ) ;
+			r.ghost.x = interX ;
+			r.ghost.y = interY ;
+			r.ghost.play( prevFrame.direction, prevFrame.x != nextFrame.x || prevFrame.y != nextFrame.y ) ;
 		}
 		
 		// turn advancement
@@ -225,6 +224,19 @@ class GameWorld extends Scene
 	{
 		removeAll();
 		super.end();
+	}
+
+	private static function moveTween( inTime:Float, totalTime:Float, tweenStart:Float, tweenEnd:Float ):Float
+	{
+		var t = inTime ;
+		var b = tweenStart ;
+		var c = tweenEnd - tweenStart ;
+		var d = totalTime ;
+
+		t /= d/2;
+		if (t < 1) return c/2*t*t + b;
+		t--;
+		return -c/2 * (t*(t-2) - 1) + b;
 	}
 	
 }
