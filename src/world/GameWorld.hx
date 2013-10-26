@@ -146,10 +146,6 @@ class GameWorld extends Scene
 			}		var runDuration = (TURNS_PER_RUN * TURN_DURATION);
 			var remainingTime:Float = Math.ceil((runDuration - turn * TURN_DURATION) / 1000);
 			var remainingTimeStr:String = Std.string(remainingTime);
-			if (remainingTimeStr.indexOf(".") < 0) {
-				remainingTimeStr = remainingTimeStr + ".0";
-			}
-			trace(remainingTimeStr);
 			chrono.text = Std.string(remainingTime);
 			if (remainingTime > 3) {
 				chrono.color = 0xFFFFFF;
