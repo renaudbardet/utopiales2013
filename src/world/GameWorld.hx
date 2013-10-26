@@ -77,7 +77,7 @@ class GameWorld extends Scene
 	
 	private var xmlDebugContent:String;
 
-	public function new(xmlContent:String = null; )
+	public function new(xmlContent:String = null )
 	{
 		xmlDebugContent = xmlContent;
 		
@@ -93,7 +93,7 @@ class GameWorld extends Scene
 		super.update();
 		
 		if (Input.pressed(Key.ESCAPE)) {
-			HXP.scene = WelcomeWorld.instance;
+			HXP.scene = new GameWorld(xmlDebugContent);
 		}
 		
 		if(!gameEnd){
@@ -301,17 +301,19 @@ class GameWorld extends Scene
 		
 		#if debug
 			// test dynamic de niveaux
-			var inputText:TextInput = new TextInput("", 0, 610, 200, 30);
+			var inputText:TextInput = new TextInput("testLD _", 0, 610, 200, 30);
 			var bLoad:Button = new Button("Charger", 210, 610, 50, 30);
-			add(inputText)
+			add(inputText);
 			add(bLoad);
-			bLoad.addEventListener(Button.CLICKED, function() {
+			bLoad.addEventListener(Button.CLICKED, function(e) {
 				var myLoader:URLLoader = new URLLoader();
-				myLoader.contentLoaderInfo.addEventListener(Event.INIT, function(e) {
+				var request:URLRequest = new URLRequest(inputText.text);
+				myLoader.addEventListener(Event.COMPLETE, function(e) {
 					HXP.world = new GameWorld(cast(myLoader.data));
 				});
+				myLoader.load(request);
 			});
-		#endif
+		#end
 		
 		super.begin();
 	}
