@@ -1,4 +1,8 @@
 package world;
+import com.haxepunk.Entity;
+import com.haxepunk.Tween;
+import openfl.Assets;
+import com.haxepunk.graphics.Stamp;
 import com.haxepunk.gui.Button;
 import com.haxepunk.gui.CheckBox;
 import com.haxepunk.gui.Control;
@@ -6,6 +10,7 @@ import com.haxepunk.gui.Label;
 import com.haxepunk.gui.RadioButton;
 import com.haxepunk.HXP;
 import com.haxepunk.Scene;
+import com.haxepunk.utils.Input;
 
 /**
  * ...
@@ -29,11 +34,34 @@ class WelcomeWorld extends Scene
 	{
 		super.begin();
 		initHaxePunkGui("gfx/ui/greyDefault.png");
+
+		var bg = new Entity() ;
+		bg.graphic = new Stamp( Assets.getBitmapData("gfx/accueil.png") ) ;
+		add(bg) ;
+		bg.layer = 9001 ;
+
+		var title = new Label("Tard is paradox") ;
+		title.color = 0xFFFFFF ;
+		title.size = 48 ;
+		title.x = (HXP.screen.width - title.width) / 2 ;
+		title.y = 30 ;
+		add(title) ;
+
+		var continueLabel = new Label("Press any key to continue...") ;
+		continueLabel.color = 0xFFFFFF ;
+		continueLabel.size = 28 ;
+		continueLabel.x = (HXP.screen.width - continueLabel.width) / 2 ;
+		continueLabel.y = HXP.screen.height - 130 ;
+		add(continueLabel) ;
+
+		//addTween( new com.haxepunk.tweens.misc.VarTween( continueLabel, "alpha", 0 ) ) ;
+
 	}
 	
 	override public function update()
 	{
-		HXP.scene = new GameWorld();
+		if( Input.pressed(com.haxepunk.utils.Key.ANY) )
+			HXP.scene = new GameWorld();
 		super.update();
 	}
 	
