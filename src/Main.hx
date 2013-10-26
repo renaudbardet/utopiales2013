@@ -24,8 +24,6 @@ class Main extends Engine
 
 	override public function init()
 	{
-		HXP.console.enable();
-		HXP.console.toggleKey = Key.P;
 #if debug
 	#if flash
 		if (flash.system.Capabilities.isDebugger)
@@ -37,7 +35,8 @@ class Main extends Engine
 #end
 		
 		HXP.screen.color = kClearColor;
-		HXP.screen.scale = 1;
+		HXP.screen.scale = 2;
+		HXP.resize(HXP.stage.stageWidth, HXP.stage.stageHeight);
 		HXP.scene = new WelcomeWorld();
 		
 		Input.define("up", [Key.Z, Key.W, Key.UP]);

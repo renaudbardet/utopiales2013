@@ -1,5 +1,6 @@
 package world;
 import com.haxepunk.Entity;
+import com.haxepunk.Sfx;
 import com.haxepunk.Tween;
 import openfl.Assets;
 import com.haxepunk.graphics.Stamp;
@@ -19,6 +20,7 @@ import com.haxepunk.utils.Input;
 
 class WelcomeWorld extends Scene
 {
+	var music:Sfx;
 	
 	public static var instance:Scene ;
 	public static var guiInitialized:Bool = false ;
@@ -42,20 +44,22 @@ class WelcomeWorld extends Scene
 
 		var title = new Label("Tard is paradox") ;
 		title.color = 0xFFFFFF ;
-		title.size = 48 ;
-		title.x = (HXP.screen.width - title.width) / 2 ;
+		title.size = 40 ;
+		title.x = Math.round((HXP.screen.width - title.width) / 2) ;
 		title.y = 30 ;
 		add(title) ;
 
 		var continueLabel = new Label("Press any key to continue...") ;
 		continueLabel.color = 0xFFFFFF ;
-		continueLabel.size = 28 ;
-		continueLabel.x = (HXP.screen.width - continueLabel.width) / 2 ;
-		continueLabel.y = HXP.screen.height - 130 ;
+		continueLabel.size = 20 ;
+		continueLabel.x = Math.round((HXP.screen.width - continueLabel.width) / 2) ;
+		continueLabel.y = Math.round(HXP.screen.height - 130) ;
 		add(continueLabel) ;
 
 		//addTween( new com.haxepunk.tweens.misc.VarTween( continueLabel, "alpha", 0 ) ) ;
 
+		music = new Sfx("music/mainLoop.mp3");
+		music.loop(0.4);
 	}
 	
 	override public function update()
@@ -67,6 +71,7 @@ class WelcomeWorld extends Scene
 	
 	override public function end()
 	{
+		music.stop();
 		removeAll();
 		super.end();
 	}
@@ -90,11 +95,11 @@ class WelcomeWorld extends Scene
 			// Label defaults parameters affect every components that uses labels : Button, ToggleButton, CheckBox, RadioButton, MenuItem, Window Title.
 			// Those labels are always accessible using "myComponent.label" and you can change specific Labels apperence any time.
 			// Label default font (must be a openfl.text.Font object).
-			Label.defaultFont = openfl.Assets.getFont("font/pf_ronda_seven.ttf");
+			Label.defaultFont = openfl.Assets.getFont("font/Hardpixel.ttf");
 			// Label defaultColor. Tip inFlashDevelop : use ctrl + shift + k to pick a color.
 			Label.defaultColor = 0x102945;
 			// Label default Size.
-			Label.defaultSize = 8;
+			Label.defaultSize = 10;
 			
 			WelcomeWorld.guiInitialized = true;
 		}

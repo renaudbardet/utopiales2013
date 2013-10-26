@@ -8,6 +8,7 @@ import com.haxepunk.gui.TextInput;
 import com.haxepunk.HXP;
 import com.haxepunk.masks.Hitbox;
 import com.haxepunk.Scene;
+import com.haxepunk.Sfx;
 import com.haxepunk.tmx.TmxEntity;
 import com.haxepunk.tmx.TmxLayer;
 import com.haxepunk.tmx.TmxMap;
@@ -15,7 +16,6 @@ import com.haxepunk.tmx.TmxObject;
 import com.haxepunk.tmx.TmxObjectGroup;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
-import com.haxepunk.World;
 import flash.display.Loader;
 import flash.events.Event;
 import flash.geom.Point;
@@ -47,7 +47,7 @@ typedef Run =  {
 	ghost:Ghost
 }
 
-class GameWorld extends World
+class GameWorld extends Scene
 {
 	public static var instance:Scene ;
 	
@@ -94,6 +94,7 @@ class GameWorld extends World
 	
 
 	private var score:Int ;
+	var music:Sfx;
 
 	public function new(xmlContent:String = null )
 	{
@@ -122,7 +123,12 @@ class GameWorld extends World
 		
 		if (waitForKey && Input.pressed(Key.ANY)) {
 			waitForKey = false;
-			this.remove(txtWaitForKey);
+			if (txtWaitForKey.scene != null) {
+				this.remove(txtWaitForKey);
+			}
+		}
+		if (gameEnd && Input.pressed(Key.ANY)) {
+			HXP.scene = new WelcomeWorld();
 		}
 		
 		if(!gameEnd && !waitForKey){
@@ -247,31 +253,30 @@ class GameWorld extends World
 	{
 		// création des objets du niveau
 		hero = new Hero();
-		Label.defaultFont = openfl.Assets.getFont("font/pf_ronda_seven.ttf");
 		chrono = new Label();
 		scoreLabel = new Label();
 		gameover = new Label("Paradoxe !");
-		gameover.size = 96;
+		gameover.size = 40;
 		gameover.color = 0x000000;
 		gameover.x = HXP.screen.width / 2 - gameover.width / 2;
 		gameover.y = HXP.screen.height / 2 - gameover.height / 2;
 		
 		// positionnemetn des élements d'interface
 		chrono.x = Math.round(HXP.screen.width/2 - 20);
-		chrono.y = 5;
-		chrono.size = 48;
+		chrono.y = 0;
+		chrono.size = 20;
 		
-		txtWaitForKey = new Label("Appuyez sur une touche\n pour entrer en phase");
-		txtWaitForKey.size = 24;
+		txtWaitForKey = new Label(" Appuyez sur une touche\npour entrer dans la phase");
+		txtWaitForKey.size = 20;
 		txtWaitForKey.color = 0x000000;
-		txtWaitForKey.x = HXP.screen.width / 2 - gameover.width / 4;
-		txtWaitForKey.y = HXP.screen.height / 2 - gameover.height / 2;
+		txtWaitForKey.x = Math.round(HXP.screen.width / 2 - gameover.width / 1.5);
+		txtWaitForKey.y = Math.round(HXP.screen.height / 2 - gameover.height / 2);
 		add(txtWaitForKey);
 		scoreLabel.text = '0' ;
 		scoreLabel.color = 0xFFFFFF ;
-		scoreLabel.x = HXP.screen.width - (scoreLabel.width + 15) ;
+		scoreLabel.x = Math.round(HXP.screen.width - (scoreLabel.width + 15)) ;
 		scoreLabel.y = 5 ;
-		scoreLabel.size = 26 ;
+		scoreLabel.size = 20 ;
 	
 		// afficher le niveau (grille)
 		if (xmlDebugContent != null) {
@@ -280,36 +285,20 @@ class GameWorld extends World
 			tiles = new TmxEntity( "map/test.tmx" );
 		}
 		
-		tiles.loadGraphic( "gfx/SOLS.png", ["tiles"] ) ;
+		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
 		moveSpanX = tiles.map.tileHeight ;
 		moveSpanY = tiles.map.tileWidth ;
 		gridWidth = tiles.map.width ;
 		gridHeight = tiles.map.height ;
-		tiles.y = HXP.screen.height / 2 - tiles.map.fullHeight / 2;
+		tiles.y = HXP.screen.height - tiles.map.fullHeight;
 		tiles.x = HXP.screen.width / 2 - tiles.map.fullWidth / 2;
 		
 		// collisions de la map
-		tiles.loadMask("tiles", "solid", [0]);
+		tiles.loadMask("tiles", "solid", [25]);
 		
 		// générer la grille depuis le niveau
 		var gridWidth = tiles.map.width;
 		var gridHeight = tiles.map.height;
-		var grid:Array<Array<CellType>> = new Array<Array<CellType>>();
-		var layer:TmxLayer = tiles.map.getLayer("tiles");
-		for (yCell in 0...gridHeight) {
-			var row = new Array<CellType>();
-			grid.push(row);
-			for (xCell in 0...gridWidth) {
-				var iTile = layer.tileGIDs[yCell][xCell];
-				row.push(
-					switch (iTile)
-					{
-						case 1 :	CellType.Wall ;
-						default :	CellType.Ground ;
-					}
-				);
-			}
-		}
 		
 		// affiche le personnage à l'endroit prévu
 		var tmxObjectGroup:TmxObjectGroup = tiles.map.getObjectGroup("objects");
@@ -356,6 +345,9 @@ class GameWorld extends World
 		#end
 		
 		super.begin();
+		
+		music = new Sfx("music/mainLoop.mp3");
+		music.loop(0.4);
 	}
 
 	private function timeJump()
@@ -391,7 +383,7 @@ class GameWorld extends World
 		
 		
 		waitForKey = true;
-		if (txtWaitForKey.world == null) {
+		if (txtWaitForKey.scene == null) {
 			add(txtWaitForKey);
 		}
 	}
@@ -416,6 +408,7 @@ class GameWorld extends World
 
 		var spawnX, spawnY ;
 		var isValidPosition = true;
+		var tries = 0;
 		do{
 
 			spawnX = tiles.x + Std.int( Math.random() * gridWidth )*moveSpanX ;
@@ -431,8 +424,8 @@ class GameWorld extends World
 					}
 				}
 			}
-
-		} while ( !isValidPosition );
+			tries++;
+		} while ( !isValidPosition && tries < 1000);
 
 		var piece = new Entity() ;
 		var spritemap = new Spritemap("gfx/SOLS.png", 20, 20) ;
@@ -450,6 +443,7 @@ class GameWorld extends World
 	
 	override public function end()
 	{
+		music.stop();
 		removeAll();
 		super.end();
 	}
