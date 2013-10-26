@@ -1,6 +1,8 @@
 package world;
 import com.haxepunk.Entity;
 import com.haxepunk.Tween;
+import com.haxepunk.tweens.misc.VarTween;
+import com.haxepunk.utils.Ease;
 import openfl.Assets;
 import com.haxepunk.graphics.Stamp;
 import com.haxepunk.gui.Button;
@@ -47,21 +49,24 @@ class WelcomeWorld extends Scene
 		title.y = 30 ;
 		add(title) ;
 
-		var continueLabel = new Label("Press any key to continue...") ;
+		var continueLabel = new Label("Appuyez sur une touche pour commencer") ;
 		continueLabel.color = 0xFFFFFF ;
 		continueLabel.size = 28 ;
 		continueLabel.x = (HXP.screen.width - continueLabel.width) / 2 ;
 		continueLabel.y = HXP.screen.height - 130 ;
 		add(continueLabel) ;
 
-		//addTween( new com.haxepunk.tweens.misc.VarTween( continueLabel, "alpha", 0 ) ) ;
+		var t = new VarTween( null, Looping ) ;
+		t.tween( continueLabel, "alpha", 0, 100, Ease.sineInOut ) ;
+		this.addTween( t ) ;
+		t.start() ;
 
 	}
 	
 	override public function update()
 	{
 		if( Input.pressed(com.haxepunk.utils.Key.ANY) )
-			HXP.scene = new GameWorld();
+			HXP.scene = new Story();
 		super.update();
 	}
 	

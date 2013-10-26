@@ -4,7 +4,9 @@ import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.gui.Button;
 import com.haxepunk.gui.Control;
 import com.haxepunk.gui.Label;
+#if debug
 import com.haxepunk.gui.TextInput;
+#end
 import com.haxepunk.HXP;
 import com.haxepunk.masks.Hitbox;
 import com.haxepunk.Scene;
@@ -209,8 +211,6 @@ class GameWorld extends World
 		if(!gameEnd){
 			++turn ;
 			inTime = inTime % TURN_DURATION ;
-
-			record() ;
 
 			currentMove = None ;
 			if (Input.check("up"))
