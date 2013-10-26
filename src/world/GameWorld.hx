@@ -144,6 +144,22 @@ class GameWorld extends Scene
 				chrono.color = 0xFF3E3E;
 			}
 		}
+		// turn advancement
+		if( inTime > TURN_DURATION )
+			nextTurn() ;
+		var runDuration = (TURNS_PER_RUN * TURN_DURATION);
+		var remainingTime:Float = Math.ceil((runDuration - turn * TURN_DURATION) / 1000);
+		var remainingTimeStr:String = Std.string(remainingTime);
+		if (remainingTimeStr.indexOf(".") < 0) {
+			remainingTimeStr = remainingTimeStr + ".0";
+		}
+		trace(remainingTimeStr);
+		chrono.text = Std.string(remainingTime);
+		if (remainingTime > 3) {
+			chrono.color = 0xFFFFFF;
+		} else {
+			chrono.color = 0xFF3E3E;
+		}
 	}
 
 	private function nextTurn()
@@ -160,19 +176,32 @@ class GameWorld extends Scene
 
 			record() ;
 
-			currentMove = None ;
-			if (Input.check("up"))
+		currentMove = None ;
+		if (Input.check("up"))
+			if( hero.collide("solid", hero.x, hero.y - moveSpanY) == null )
 				currentMove = Some(Up) ;
-			else if (Input.check("down"))
+			else
+				hero.play( Up, false ) ;
+		else if (Input.check("down") )
+			if( hero.collide("solid", hero.x, hero.y + moveSpanY) == null )
 				currentMove = Some(Down) ;
-			else if (Input.check("left"))
+			else
+				hero.play( Down, false ) ;
+		else if (Input.check("left") )
+			if( hero.collide("solid", hero.x - moveSpanX, hero.y) == null )
 				currentMove = Some(Left) ;
-			else if (Input.check("right"))
+			else
+				hero.play( Left, false ) ;
+		else if (Input.check("right") )
+			if( hero.collide("solid", hero.x + moveSpanX, hero.y) == null )
 				currentMove = Some(Right) ;
+			else
+				hero.play( Right, false ) ;
 
-			if( turn >= TURNS_PER_RUN )
-				timeJump() ;
-		}
+		record() ;
+
+		if( turn >= TURNS_PER_RUN )
+			timeJump() ;
 
 	}
 	
