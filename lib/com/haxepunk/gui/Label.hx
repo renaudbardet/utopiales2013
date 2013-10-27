@@ -213,8 +213,7 @@ class Label extends Control
 	 */
 	public var align(default, set_align):FormatAlign;
 	private function set_align(value:FormatAlign):FormatAlign {
-		if (align == value) return value;
-		align = value;
+		_format.align = value ;
 		updateBuffer();
 		return value;
 	}
