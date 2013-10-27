@@ -481,6 +481,8 @@ class GameWorld extends Scene
 		// stop all animations
 		stopAllAnimations();
 		
+		score += 1 ;
+		scoreLabel.text = ''+score ;
 		
 		waitForKey = true;
 		if (txtWaitForKey.scene == null) {
