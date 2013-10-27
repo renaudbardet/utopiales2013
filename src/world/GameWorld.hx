@@ -339,6 +339,11 @@ class GameWorld extends Scene
 		tiles.y = HXP.screen.height - tiles.map.fullHeight;
 		tiles.x = HXP.screen.width / 2 - tiles.map.fullWidth / 2;
 		
+		var shadingEntity = new Entity() ;
+		shading = new BitmapData( tiles.map.fullWidth, tiles.map.fullHeight, true, SHADING_COLOR ) ;
+		shadingEntity.graphic = new Stamp(shading) ;
+		halo = Assets.getBitmapData("gfx/halo.png") ;
+
 		// collisions de la map
 		tiles.loadMask("tiles", "solid", [25]);
 		
