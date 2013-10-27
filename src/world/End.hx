@@ -54,43 +54,52 @@ class End extends Scene
 					}
 					var highscoreLbl = new Label(highscoreStr);
 					highscoreLbl.color = 0xFFFFFF ;
-					highscoreLbl.size = 10;
 					highscoreLbl.x = 5;
+					highscoreLbl.size = 10;
 					highscoreLbl.y = 5;
 					add(highscoreLbl);
 			});
 		});
 		
-		var bgG:Stamp = new Stamp("gfx/accueil.png");
+		var bgG:Stamp = new Stamp("gfx/score.png");
 		var bg = new Entity();
 		bg.graphic = bgG;
 		bg.layer = 9001;
 		
-		var scoreLbl:Label = new Label("Votre score : " + _score);
-		scoreLbl.color = 0xFFFFFF ;
-		scoreLbl.size = 40;
-		scoreLbl.x = Math.floor(HXP.screen.width / 2 - scoreLbl.width / 2);
-		scoreLbl.y = Math.floor(HXP.screen.height / 2 - scoreLbl.height / 2) - 20;
+		var phraseLbl = new Label("123456890123456789012345678901234567890", 70, 45, 150);
+		phraseLbl.color = 0xFFFFFF ;
+		phraseLbl.size = 8;
+		phraseLbl.font = openfl.Assets.getFont("font/pf_ronda_seven.ttf").fontName;
 		
-		var niveauLbl:Label = new Label("Salle « " + _niveau + " »");
-		niveauLbl.color = 0xFFFFFF ;
-		niveauLbl.size = 20;
-		niveauLbl.x = Math.floor(HXP.screen.width / 2 - niveauLbl.width / 2);
-		niveauLbl.y = 30;
+		var niveauLbl:Label = new Label(_niveau);
+		niveauLbl.color = 0x000000 ;
+		niveauLbl.shadowColor = 0xFFFFFF;
+		niveauLbl.size = 16;
+		niveauLbl.x = 65 + 164/2 - niveauLbl.width/2;
+		niveauLbl.y = 188;
+		niveauLbl.font = openfl.Assets.getFont("font/pf_ronda_seven.ttf").fontName;
+		
+		var scoreLbl:Label = new Label(_score);
+		scoreLbl.color = 0x000000 ;
+		scoreLbl.shadowColor = 0xFFFFFF;
+		scoreLbl.size = 16;
+		scoreLbl.x = 65 + 164/2 - scoreLbl.width/2;
+		scoreLbl.y = 248;
+		scoreLbl.font = openfl.Assets.getFont("font/pf_ronda_seven.ttf").fontName;
 		
 		continueLabel = new Label("Appuyez sur une touche pour recommencer") ;
 		continueLabel.color = 0xFFFFFF ;
+		continueLabel.shadowColor = 0x000000;
 		continueLabel.size = 16 ;
 		continueLabel.font = Assets.getFont("font/lythgame.ttf").fontName;
 		continueLabel.x = Math.floor((HXP.screen.width - continueLabel.width) / 2) ;
-		continueLabel.y = Math.floor(HXP.screen.height - 60) ;
-		
-	
+		continueLabel.y = Math.floor(HXP.screen.height - continueLabel.height - 3) ;
 		
 		add(bg);
 		add(scoreLbl) ;
 		add(niveauLbl) ;
 		add(continueLabel) ;
+		add(phraseLbl);
 	}
 	
 	override public function update()

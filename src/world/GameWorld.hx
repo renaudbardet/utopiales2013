@@ -322,6 +322,7 @@ class GameWorld extends Scene
 			
 			try {
 				tiles = new TmxEntity( new TmxMap(xmlDebugContent));
+				tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
 			}catch (e:Dynamic) {
 				// fall back en cas de pb avec un niveau
 				tiles = new TmxEntity( "map/testLD _01.tmx" );
@@ -330,8 +331,7 @@ class GameWorld extends Scene
 		}else {
 			tiles = new TmxEntity( "map/test.tmx" );
 		}
-		
-		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
+
 		moveSpanX = tiles.map.tileHeight ;
 		moveSpanY = tiles.map.tileWidth ;
 		gridWidth = tiles.map.width ;
