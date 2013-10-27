@@ -38,8 +38,7 @@ class Main extends Engine
 		HXP.screen.color = kClearColor;
 		HXP.screen.scale = 2;
 		HXP.resize(HXP.stage.stageWidth, HXP.stage.stageHeight);
-		//HXP.scene = new WelcomeWorld();
-		HXP.scene = new End("50","Version 12");
+		HXP.scene = new WelcomeWorld();
 		
 		Input.define("up", [Key.Z, Key.W, Key.UP]);
 		Input.define("right", [Key.D, Key.RIGHT]);
