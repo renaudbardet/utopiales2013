@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="23" height="15" tilewidth="20" tileheight="20">
+ <properties>
+  <property name="nom" value="version21"/>
+ </properties>
+ <tileset firstgid="1" source="tileset.tsx"/>
+ <layer name="tiles" width="23" height="15">
+  <data encoding="base64" compression="zlib">
+   eJy9krsKwkAQRbcQCwniK4SoJJFFU4iF2uf/P8sbmIXLsg8cY4rT3JO5DJu5GmNuP7CO5D24gz04ECUYCI1/SHcNjsQJWJmzSp/qLkAHVhlfKLuHxGzOc3dHXLzZVuFd9/jNGWyJneQbL8/5RnLunprU3kvJF5G9Y97fe3xv/z75PUP3m/Jz3smc3ZXMVkrvukP3yf/8W++6n+D1B97gA8GmLV8=
+  </data>
+ </layer>
+ <objectgroup name="objects" width="23" height="15">
+  <object name="start" x="230" y="71"/>
+ </objectgroup>
+</map>
