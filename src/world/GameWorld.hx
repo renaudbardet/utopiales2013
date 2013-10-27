@@ -340,7 +340,7 @@ class GameWorld extends Scene
 		gridWidth = tiles.map.width ;
 		gridHeight = tiles.map.height ;
 		tiles.y = HXP.screen.height - tiles.map.fullHeight;
-		tiles.x = HXP.screen.width / 2 - tiles.map.fullWidth / 2;
+		tiles.x = HXP.screen.width- tiles.map.fullWidth;
 		
 		var shadingEntity = new Entity() ;
 		shading = new BitmapData( tiles.map.fullWidth, tiles.map.fullHeight, true, SHADING_COLOR ) ;
