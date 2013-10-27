@@ -1,9 +1,12 @@
 package world;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Spritemap;
+import com.haxepunk.graphics.Stamp;
 import com.haxepunk.gui.Button;
 import com.haxepunk.gui.Control;
+import com.haxepunk.gui.FormatAlign;
 import com.haxepunk.gui.Label;
+import flash.text.TextFormat;
 #if debug
 import com.haxepunk.gui.TextInput;
 #end
@@ -65,6 +68,7 @@ class GameWorld extends Scene
 	private static var LAYER_HERO:Int = 800;
 	private static var LAYER_GHOST:Int = 900;
 	private static var LAYER_VISION:Int = 950;
+	private static var LAYER_INTERFACE:Int = 1999;
 	private static var LAYER_MAP:Int = 2000;
 	
 	private var tiles:TmxEntity ;
@@ -206,9 +210,9 @@ class GameWorld extends Scene
 			var remainingTimeStr:String = Std.string(remainingTime);
 			chrono.text = Std.string(remainingTime);
 			if (remainingTime > 3) {
-				chrono.color = 0xFFFFFF;
+				chrono.color = 0x000000;
 			} else {
-				chrono.color = 0xFF3E3E;
+				chrono.color = 0xD20000;
 			}
 		}
 	}
@@ -234,7 +238,7 @@ class GameWorld extends Scene
 			currentPieces.remove( retreivedPiece ) ;
 			score += BASE_SCORE ;
 			scoreLabel.text = '' + score ;
-			scoreLabel.x = HXP.screen.width - (scoreLabel.width + 4) ;
+			scoreLabel.x = 410 - scoreLabel.width;
 			spawnPiece() ;
 		}
 
@@ -263,7 +267,7 @@ class GameWorld extends Scene
 		// création des objets du niveau
 		hero = new Hero();
 		chrono = new Label();
-		scoreLabel = new Label();
+		scoreLabel = new Label("0", 345, -3,0,0);
 		gameover = new Label("Paradoxe !");
 		gameover.size = 40;
 		gameover.color = 0x000000;
@@ -272,10 +276,17 @@ class GameWorld extends Scene
 		gameover.x = HXP.screen.width / 2 - gameover.width / 2;
 		gameover.y = HXP.screen.height / 2 - gameover.height / 2;
 		
+		var bg = new Entity() ;
+		bg.graphic = new Stamp( Assets.getBitmapData("gfx/interface.png") ) ;
+		add(bg) ;
+		bg.layer = LAYER_INTERFACE ;
+		
 		// positionnemetn des élements d'interface
-		chrono.x = Math.round(HXP.screen.width/2 - 20);
-		chrono.y = 0;
+		chrono.x = 233;
+		chrono.y = -3;
 		chrono.size = 20;
+		chrono.shadowColor = 0xFFFFFF;
+		chrono.align = FormatAlign.CENTER;
 		
 		txtWaitForKey = new Label("Commencez a vous deplacer\n   pour entrer en phase");
 		txtWaitForKey.size = 20;
@@ -285,11 +296,12 @@ class GameWorld extends Scene
 		txtWaitForKey.x = Math.round(HXP.screen.width / 2 - gameover.width / 1.5);
 		txtWaitForKey.y = Math.round(HXP.screen.height / 2 - gameover.height / 2);
 		add(txtWaitForKey);
-		scoreLabel.text = '0' ;
-		scoreLabel.color = 0xFFFFFF ;
-		scoreLabel.x = Math.round(HXP.screen.width - (scoreLabel.width + 15)) ;
-		scoreLabel.y = 5 ;
+		scoreLabel.x = 410 - scoreLabel.width;
+		scoreLabel.color = 0x000000;
+		scoreLabel.shadowColor = 0xFFFFFF;
 		scoreLabel.size = 20 ;
+		scoreLabel.align = FormatAlign.RIGHT;
+		
 	
 		// afficher le niveau (grille)
 		if (xmlDebugContent != null) {
@@ -311,7 +323,7 @@ class GameWorld extends Scene
 		gridWidth = tiles.map.width ;
 		gridHeight = tiles.map.height ;
 		tiles.y = HXP.screen.height - tiles.map.fullHeight;
-		tiles.x = HXP.screen.width / 2 - tiles.map.fullWidth / 2;
+		tiles.x = HXP.screen.width - tiles.map.fullWidth;
 		
 		// collisions de la map
 		tiles.loadMask("tiles", "solid", [25]);
