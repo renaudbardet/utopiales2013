@@ -63,19 +63,19 @@ class Vision extends Entity
 		
 		canvasL = new Spritemap(canvasLB, 60, 20);
 		canvasL.add("play", [1, 2], 10);
-		canvasL.alpha = 0.7;
+		canvasL.alpha = 0.4;
 		canvasL.play("play");
 		canvasR = new Spritemap(canvasRB, 60, 20);
 		canvasR.add("play", [1, 2], 10);
-		canvasR.alpha = 0.7;
+		canvasR.alpha = 0.4;
 		canvasR.play("play");
 		canvasU = new Spritemap(canvasUB, 20, 60);
 		canvasU.add("play", [1, 2], 10);
-		canvasU.alpha = 0.7;
+		canvasU.alpha = 0.4;
 		canvasU.play("play");
 		canvasB = new Spritemap(canvasBB, 20, 60);
 		canvasB.add("play", [1, 2], 10);
-		canvasB.alpha = 0.7;
+		canvasB.alpha = 0.4;
 		canvasB.play("play");
 
 		super();

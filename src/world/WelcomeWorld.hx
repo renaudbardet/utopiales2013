@@ -55,7 +55,7 @@ class WelcomeWorld extends Scene
 
 		var muteLabel = new Label("M = musique ON/OFF") ;
 		muteLabel.color = 0x000000 ;
-		muteLabel.size = 10 ;
+		muteLabel.size = 8 ;
 		muteLabel.x = Math.round((HXP.screen.width - muteLabel.width) - 10);
 		muteLabel.y = 10 ;
 		muteLabel.font = Assets.getFont("font/lythgame.ttf").fontName;
