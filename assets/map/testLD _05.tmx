@@ -6,7 +6,7 @@
  <tileset firstgid="1" source="tileset.tsx"/>
  <layer name="tiles" width="23" height="15">
   <data encoding="base64" compression="zlib">
-   eJzFk7EKgCAURQ0KpIaoJYhoq4ZoyP7/33qDDy4XqVCh4YBe5agXtMYYCyzCmoEt4GuFMQOHd++ZfF/d3I3mE6AZ9oDuhXpQZ0w3B435zin9vLmRUqhg3tD6kOCuaf7m5nPQzec8uTuhT3DHdp3LXQhOuCi7yHf6fQ6ymdDcBZx45z/+ZAzajb7FUg8pqA+5AWf0J64=
+   eJzFk7sKgDAMRSuoiAg+FkGKi6iDOKj//29WiBAuodVacDhDUjjcpmmmlMoYo2EKwCz4SkMXgJXcSyDfU3dsSIie9bWll4J7hDnczsYjawFuzNx+mIPLjXPhdx/gHOv2hTu35JJqfEvutuXAWjveBN22HC4wVwi3tFeR4QB3peTdrQlpp6W5/PUnfbjmsBMHuTfW+8Lt45x+OyUR
   </data>
  </layer>
  <objectgroup name="objects" width="23" height="15">
