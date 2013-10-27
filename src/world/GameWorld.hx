@@ -79,7 +79,7 @@ class GameWorld extends Scene
 	private static var LAYER_PIECE:Int = 210;
 	private static var LAYER_SHADING:Int = 300;
 	private static var LAYER_GHOST:Int = 900;
-	private static var LAYER_VISION:Int = 950;
+	private static var LAYER_VISION:Int = 205;
 	private static var LAYER_MAP:Int = 2000;
 	
 	private var tiles:TmxEntity ;
