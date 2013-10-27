@@ -238,9 +238,12 @@ class GameWorld extends Scene
 		hero.y = Math.round((hero.y - tiles.y) / 20) * 20 + tiles.y;
 				
 		// condition de fin
-		if (hero.collide("vision", hero.x, hero.y) != null) {
+		var iSeeYou:Ghost = cast(hero.collide("vision", hero.x, hero.y));
+		if (iSeeYou != null) {
 			gameEnd = true;
 			stopAllAnimations();
+			iSeeYou.jump(iSeeYou.direction);
+			hero.jump(iSeeYou.backDirection);
 			add(gameover);
 		}
 		
