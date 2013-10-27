@@ -1,8 +1,10 @@
 package world;
 import com.haxepunk.Entity;
+import com.haxepunk.tmx.TmxMap;
 import com.haxepunk.Tween;
 import com.haxepunk.tweens.misc.VarTween;
 import com.haxepunk.utils.Ease;
+import com.haxepunk.utils.Key;
 import openfl.Assets;
 import com.haxepunk.graphics.Stamp;
 import com.haxepunk.gui.Button;
@@ -67,8 +69,36 @@ class Story extends Scene
 	
 	override public function update()
 	{
-		if( Input.pressed(com.haxepunk.utils.Key.ANY) )
-			HXP.scene = new GameWorld();
+		if (Input.pressed(Key.NUMPAD_0)) {
+			HXP.scene = new GameWorld(Assets.getText("map/testLD _01.tmx"));
+		} else if (Input.pressed(Key.NUMPAD_1)) {
+			HXP.scene = new GameWorld(Assets.getText("map/testLD _02.tmx"));
+		} else if (Input.pressed(Key.NUMPAD_2)) {
+			HXP.scene = new GameWorld(Assets.getText("map/testLD _03.tmx"));
+		} else if (Input.pressed(Key.NUMPAD_3)) {
+			HXP.scene = new GameWorld(Assets.getText("map/testLD _04.tmx"));
+		} else if (Input.pressed(Key.NUMPAD_4)) {
+			HXP.scene = new GameWorld(Assets.getText("map/testLD _05.tmx"));
+		} else if (Input.pressed(Key.NUMPAD_5)) {
+			HXP.scene = new GameWorld(Assets.getText("map/testLD _06.tmx"));
+		} else if (Input.pressed(Key.NUMPAD_6)) {
+			HXP.scene = new GameWorld(Assets.getText("map/testLD _07.tmx"));
+		} else if (Input.pressed(Key.NUMPAD_7)) {
+			HXP.scene = new GameWorld(Assets.getText("map/testLD _08.tmx"));
+		} else if (Input.pressed(Key.NUMPAD_8)) {
+			HXP.scene = new GameWorld(Assets.getText("map/testLD _09.tmx"));
+		} else if (Input.pressed(Key.NUMPAD_9)) {
+			HXP.scene = new GameWorld(Assets.getText("map/testLD _10.tmx"));
+		} else if (Input.pressed(Key.A)) {
+			HXP.scene = new GameWorld(Assets.getText("map/testLD _11.tmx"));
+		} else if ( Input.pressed(com.haxepunk.utils.Key.ANY) ) {
+			var levels = new Array<String>();
+			for (i in 1...11) {
+				levels.push("map/testLD _"+(Std.string(i).length == 1 ? "0" + Std.string(i) : Std.string(i))+".tmx");
+			}
+			var rand = Math.floor(Math.random() * levels.length);
+			HXP.scene = new GameWorld(Assets.getText(levels[rand]));
+		}
 		super.update();
 	}
 	

@@ -121,6 +121,9 @@ class GameWorld extends Scene
 		}
 		
 		if (Input.pressed(Key.ESCAPE)) {
+			HXP.scene = new WelcomeWorld();
+		}
+		if (Input.pressed(Key.R)) {
 			HXP.scene = new GameWorld(xmlDebugContent);
 		}
 		
