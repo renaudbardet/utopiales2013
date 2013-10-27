@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="48" height="28" tilewidth="20" tileheight="20">
+ <tileset firstgid="1" name="tileset" tilewidth="20" tileheight="20">
+  <image source="../gfx/tileset.png" width="40" height="20"/>
+ </tileset>
+ <layer name="tiles" width="48" height="28" opacity="0.21">
+  <data encoding="base64" compression="zlib">
+   eJztlkkOwDAIA9P+/9G9V5Vqk3GUSBy4IRgSs9xjjPtwuwxz/ZPW/M3f/Bl+cmZUc3zlU3IrjERNu+nHrWWm7rR2qH92YqvxqBoofjfOjvzE/63ir/I4/kn9r6i3+fdmf/OndnzyTf98qRuG3luUftzbiWQn+Fdra1d+ZU9R/InbvZqv2ofufEj1hHMvqjcbOX/V+ai8nRKD7CdVW9X5P6vFqmZUvlPsAW4iBmc=
+  </data>
+ </layer>
+ <objectgroup name="objects" width="48" height="28">
+  <object name="start" x="69" y="69"/>
+  <object name="spawner" x="91" y="211"/>
+  <object name="spawner" x="470" y="249"/>
+  <object name="spawner" x="407" y="30"/>
+ </objectgroup>
+</map>

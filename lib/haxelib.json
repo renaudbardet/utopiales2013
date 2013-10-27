@@ -1,0 +1,14 @@
+{
+  "name": "haxepunk-gui",
+  "url" : "https://bitbucket.org/Lythom/haxepunk-gui",
+  "license": "BSD",
+  "tags": ["flash", "haxepunk", "game"],
+  "description": "HaxePunk GUI is a toolset to display user interfaces that works with HaxePunk engine. It provide some basic components to allow the user to interact with the game.",
+  "version": "2.4.0",
+  "releasenote": "HaxePunk 2.4.1 (haxe3 + openfl) support, Full changelog at https://bitbucket.org/Lythom/haxepunk-gui#4-versions",
+  "contributors": ["Lythom"],
+  "dependencies": {
+    "openfl": "",
+    "HaxePunk": ""
+  }
+}
