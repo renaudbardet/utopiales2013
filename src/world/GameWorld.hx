@@ -69,12 +69,12 @@ class GameWorld extends Scene
 	private static var BASE_SCORE = 10 ;
 
 	private static var LAYER_GUI:Int = 100;
-	private static var LAYER_PIECE:Int = 200;
+	private static var LAYER_INTERFACE:Int = 150;
+	private static var LAYER_HERO:Int = 200;
+	private static var LAYER_PIECE:Int = 210;
 	private static var LAYER_SHADING:Int = 300;
-	private static var LAYER_HERO:Int = 800;
 	private static var LAYER_GHOST:Int = 900;
 	private static var LAYER_VISION:Int = 950;
-	private static var LAYER_INTERFACE:Int = 1999;
 	private static var LAYER_MAP:Int = 2000;
 	
 	private var tiles:TmxEntity ;
@@ -107,7 +107,8 @@ class GameWorld extends Scene
 	private var score:Int ;
 	var music:Sfx;
 
-	private static var SHADING_COLOR = 0x7FFF0000 ;
+	private static inline var SHADING_ALPHA = 0xB0 ;
+	private static inline var SHADING_COLOR = (SHADING_ALPHA << 24) + 0x493D26 ;
 	private var shading:BitmapData ;
 	private var halo:BitmapData ;
 
@@ -203,7 +204,20 @@ class GameWorld extends Scene
 
 			// move halo
 			shading.fillRect( new Rectangle(0,0,shading.width,shading.height), SHADING_COLOR ) ;
-			//shading.copyChannel( )
+			var pt = new Point( hero.x-halo.width/2, hero.y - (15 + halo.height/2) ) ;
+			/*switch (currentDir) {
+				case Up: pt.y -= 2*moveSpanY ;
+				case Down: pt.y += 2*moveSpanY ;
+				case Left: pt.x -= 2*moveSpanX ;
+				case Right: pt.x += 2*moveSpanX ;
+			}*/
+			shading.copyChannel(
+				halo,
+				new Rectangle(0,0,60,60),
+				pt,
+				flash.display.BitmapDataChannel.ALPHA,
+				flash.display.BitmapDataChannel.ALPHA
+			) ;
 
 			// pilot ghosts
 			for( r in runs )
@@ -342,7 +356,12 @@ class GameWorld extends Scene
 		var shadingEntity = new Entity() ;
 		shading = new BitmapData( tiles.map.fullWidth, tiles.map.fullHeight, true, SHADING_COLOR ) ;
 		shadingEntity.graphic = new Stamp(shading) ;
-		halo = Assets.getBitmapData("gfx/halo.png") ;
+		shadingEntity.x = tiles.x ;
+		shadingEntity.y = tiles.y ;
+		halo = Assets.getBitmapData("gfx/halo.png").clone() ;
+		var ct = new flash.geom.ColorTransform() ;
+		ct.alphaMultiplier = SHADING_ALPHA/0xFF ;
+		halo.colorTransform(new Rectangle(0,0,halo.width,halo.height), ct) ;
 
 		// collisions de la map
 		tiles.loadMask("tiles", "solid", [25]);
