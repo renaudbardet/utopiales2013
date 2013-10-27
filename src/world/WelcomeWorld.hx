@@ -53,9 +53,10 @@ class WelcomeWorld extends Scene
 
 		var continueLabel = new Label("Appuyez sur une touche pour commencer") ;
 		continueLabel.color = 0xFFFFFF ;
-		continueLabel.size = 20 ;
+		continueLabel.size = 16 ;
 		continueLabel.x = Math.round((HXP.screen.width - continueLabel.width) / 2) ;
-		continueLabel.y = Math.round(HXP.screen.height - 130) ;
+		continueLabel.y = Math.round(10) ;
+		continueLabel.font = Assets.getFont("font/lythgame.ttf").fontName;
 		add(continueLabel) ;
 
 		var t = new VarTween( null, Looping ) ;
