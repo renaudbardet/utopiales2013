@@ -271,7 +271,7 @@ class GameWorld extends Scene
 		chrono.y = 0;
 		chrono.size = 20;
 		
-		txtWaitForKey = new Label("Commencez à vous deplacer\n   pour entrer en phase");
+		txtWaitForKey = new Label("Commencez a vous deplacer\n   pour entrer en phase");
 		txtWaitForKey.size = 20;
 		txtWaitForKey.color = 0x000000;
 		txtWaitForKey.x = Math.round(HXP.screen.width / 2 - gameover.width / 1.5);
@@ -285,7 +285,14 @@ class GameWorld extends Scene
 	
 		// afficher le niveau (grille)
 		if (xmlDebugContent != null) {
-			tiles = new TmxEntity( new TmxMap(xmlDebugContent));
+			
+			try {
+				tiles = new TmxEntity( new TmxMap(xmlDebugContent));
+			}catch (e:Dynamic) {
+				// fall back en cas de pb avec un niveau
+				tiles = new TmxEntity( "map/testLD _01.tmx" );
+				trace("fail loading level");
+			}
 		}else {
 			tiles = new TmxEntity( "map/test.tmx" );
 		}
@@ -354,7 +361,7 @@ class GameWorld extends Scene
 		super.begin();
 		
 		music = new Sfx("music/mainLoop.mp3");
-		music.loop(0.4);
+		music.loop(0.6);
 	}
 
 	private function timeJump()
