@@ -1,5 +1,6 @@
 
 import com.haxepunk.Engine;
+import world.End;
 
 import com.haxepunk.HXP;
 import com.haxepunk.utils.Input;

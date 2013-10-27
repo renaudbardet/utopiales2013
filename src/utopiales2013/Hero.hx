@@ -1,6 +1,10 @@
 package utopiales2013;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Spritemap;
+import com.haxepunk.Tween.TweenType;
+import com.haxepunk.tweens.misc.VarTween;
+import com.haxepunk.utils.Ease;
+import com.haxepunk.utils.Ease.EaseFunction;
 import flash.geom.Point;
 import utopiales2013.Hero.Direction;
 
@@ -31,7 +35,11 @@ class Hero extends Entity
 		_spritemap.add("moveright", [0, 1, 2, 3, 2, 1], 5);
 		_spritemap.add("moveleft", [4, 5, 6, 7, 6 , 5], 5);
 		_spritemap.add("moveup", [8, 9, 10, 11, 10, 9], 5);
-		_spritemap.add("movedown",  [12, 13, 14, 15, 14 ,13], 5);
+		_spritemap.add("movedown",  [12, 13, 14, 15, 14 , 13], 5);
+		_spritemap.add("jumpright",  [16], 5);
+		_spritemap.add("jumpleft",  [17], 5);
+		_spritemap.add("jumpup",  [18], 5);
+		_spritemap.add("jumpdown",  [19], 5);
 		_spritemap.y = -10;
 		graphic = _spritemap;
 		_spritemap.play("down");
@@ -88,6 +96,25 @@ class Hero extends Entity
 		}
 	}
 	
+	public function jump(direction:Direction) {
+		
+		/*var jumpTweener:VarTween = new VarTween(jumpOver, TweenType.OneShot);
+		jumpTweener.tween(this, "y", y + 10, 0.5, Ease.bounceIn);
+		jumpTweener.start();*/
+		switch (direction)
+		{
+			case Direction.Up:
+				_spritemap.play("jumpup");
+				
+			case Direction.Down:
+				_spritemap.play("jumpdown");
+			case Direction.Left:
+				_spritemap.play("jumpleft");
+			case Direction.Right:
+				_spritemap.play("jumpright");
+		}
+	}
+	
 	/**
 	 * Déplace le héro en tenant compte des collisions, change son animation si besoin
 	 * @param	direction
@@ -120,6 +147,22 @@ class Hero extends Entity
 	public var direction(get_direction, null):Direction;
 	private function get_direction():Direction {
 		return _direction;
+	}
+	
+	public var backDirection(get_backDirection, null):Direction;
+	private function get_backDirection():Direction {
+		switch (_direction)
+		{
+			case Direction.Up:
+				return Direction.Down;
+			case Direction.Down:
+				return Direction.Up;
+			case Direction.Left:
+				return Direction.Right;
+			case Direction.Right:
+				return Direction.Left;
+		}
+		return Direction.Down;
 	}
 	
 	public var directionPoint(get_directionPoint, null):Point;

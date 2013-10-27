@@ -252,9 +252,12 @@ class GameWorld extends Scene
 		hero.y = Math.round((hero.y - tiles.y) / 20) * 20 + tiles.y;
 				
 		// condition de fin
-		if (hero.collide("vision", hero.x, hero.y) != null) {
+		var iSeeYou:Ghost = cast(hero.collide("vision", hero.x, hero.y));
+		if (iSeeYou != null) {
 			gameEnd = true;
 			stopAllAnimations();
+			iSeeYou.jump(iSeeYou.direction);
+			hero.jump(iSeeYou.backDirection);
 			add(gameover);
 		}
 		
@@ -336,6 +339,7 @@ class GameWorld extends Scene
 			
 			try {
 				tiles = new TmxEntity( new TmxMap(xmlDebugContent));
+				tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
 			}catch (e:Dynamic) {
 				// fall back en cas de pb avec un niveau
 				tiles = new TmxEntity( "map/testLD _01.tmx" );
@@ -344,14 +348,13 @@ class GameWorld extends Scene
 		}else {
 			tiles = new TmxEntity( "map/test.tmx" );
 		}
-		
-		tiles.loadGraphic( "gfx/tileset.png", ["tiles"] ) ;
+
 		moveSpanX = tiles.map.tileHeight ;
 		moveSpanY = tiles.map.tileWidth ;
 		gridWidth = tiles.map.width ;
 		gridHeight = tiles.map.height ;
 		tiles.y = HXP.screen.height - tiles.map.fullHeight;
-		tiles.x = HXP.screen.width / 2 - tiles.map.fullWidth / 2;
+		tiles.x = HXP.screen.width- tiles.map.fullWidth;
 		
 		var shadingEntity = new Entity() ;
 		shading = new BitmapData( tiles.map.fullWidth, tiles.map.fullHeight, true, SHADING_COLOR ) ;
