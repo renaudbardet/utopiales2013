@@ -84,7 +84,7 @@ class GameWorld extends Scene
 
 	private var turn : Int ; // turn in the current run
 	private var inTime : Int ; // ms since turn start
-	private var currentMove : Option<Direction> ;
+	private var currentMove : Option<{ dir:Direction, to:Point, since:Int }> ;
 
 	private var currentPieces:List<Entity> ;
 	
@@ -93,8 +93,6 @@ class GameWorld extends Scene
 	private var updateInit:Bool = false;
 	
 	private var xmlDebugContent:String;
-	
-	
 
 	private var score:Int ;
 	var music:Sfx;
@@ -142,31 +140,51 @@ class GameWorld extends Scene
 
 			inTime += Std.int( 1000/HXP.frameRate );
 
+			// Detect input
+			switch (currentMove) {
+				case None :
+					if( inTime < (4/5)*TURN_DURATION )
+					{
+						if (Input.check("up")) {
+							var canMove = hero.collide("solid", hero.x, hero.y - moveSpanY) == null ;
+							var to = new Point( hero.x, canMove ? hero.y - moveSpanY : hero.y ) ;
+							currentMove = Some({dir:Up,to:to,since:inTime}) ;
+						} else if (Input.check("down") ) {
+							var canMove = hero.collide("solid", hero.x, hero.y + moveSpanY) == null ;
+							var to = new Point( hero.x, canMove ? hero.y + moveSpanY : hero.y ) ;
+							currentMove = Some({dir:Down,to:to,since:inTime}) ;
+						} else if (Input.check("left") ) {
+							var canMove = hero.collide("solid", hero.x - moveSpanX, hero.y) == null ;
+							var to = new Point( canMove ? hero.x - moveSpanX : hero.x, hero.y ) ;
+							currentMove = Some({dir:Left,to:to,since:inTime}) ;
+						} else if (Input.check("right") ) {
+							var canMove = hero.collide("solid", hero.x + moveSpanX, hero.y ) == null ;
+							var to = new Point( canMove ? hero.x + moveSpanX : hero.x, hero.y ) ;
+							currentMove = Some({dir:Right,to:to,since:inTime}) ;
+						}
+					}
+				default : // already moving
+			}
+
 			// interpolate hero position
-			var prevFrame = currentRun.record.get(turn) ;
+			var prevFrame = currentRun.record.get( turn ) ;
 			var nextX = prevFrame.x ;
 			var nextY = prevFrame.y ;
-			var currentDir = Up ;
 			var isMoving = true ;
+			var currentDir = prevFrame.dir ;
+			var moveStartTime = 0 ;
 			switch ( currentMove ) {
 				case None:
-					currentDir = prevFrame.dir ;
 					isMoving = false ;
-				case Some( Up )		:
-					nextY -= moveSpanY ;
-					currentDir = Up ;
-				case Some( Down )	:
-					nextY += moveSpanY ;
-					currentDir = Down ;
-				case Some( Left )	:
-					nextX -= moveSpanX ;
-					currentDir = Left ;
-				case Some( Right )	:
-					nextX += moveSpanX ;
-					currentDir = Right ;
+				case Some( moveInfos ):
+					currentDir = moveInfos.dir ;
+					nextX = moveInfos.to.x ;
+					nextY = moveInfos.to.y ;
 			}
-			hero.x = moveTween( inTime, TURN_DURATION, prevFrame.x, nextX ) ;
-			hero.y = moveTween( inTime, TURN_DURATION, prevFrame.y, nextY ) ;
+			if( moveStartTime > inTime ) moveStartTime = inTime ;
+			if( moveStartTime < 0 ) moveStartTime = 0 ;
+			hero.x = moveTween( inTime - moveStartTime, TURN_DURATION - moveStartTime, prevFrame.x, nextX ) ;
+			hero.y = moveTween( inTime - moveStartTime, TURN_DURATION - moveStartTime, prevFrame.y, nextY ) ;
 			hero.play( currentDir, isMoving ) ;
 
 			// pilot ghosts
@@ -224,27 +242,13 @@ class GameWorld extends Scene
 			++turn ;
 			inTime = inTime % TURN_DURATION ;
 
+			switch( currentMove ) {
+				case Some( moveInfos ) :
+					hero.x = moveInfos.to.x ;
+					hero.y = moveInfos.to.y ;
+				case None :
+			}
 			currentMove = None ;
-			if (Input.check("up"))
-				if( hero.collide("solid", hero.x, hero.y - moveSpanY) == null )
-					currentMove = Some(Up) ;
-				else
-					hero.play( Up, false ) ;
-			else if (Input.check("down") )
-				if( hero.collide("solid", hero.x, hero.y + moveSpanY) == null )
-					currentMove = Some(Down) ;
-				else
-					hero.play( Down, false ) ;
-			else if (Input.check("left") )
-				if( hero.collide("solid", hero.x - moveSpanX, hero.y) == null )
-					currentMove = Some(Left) ;
-				else
-					hero.play( Left, false ) ;
-			else if (Input.check("right") )
-				if( hero.collide("solid", hero.x + moveSpanX, hero.y ) == null )
-					currentMove = Some(Right) ;
-				else
-					hero.play( Right, false ) ;
 
 			record() ;
 
@@ -458,13 +462,11 @@ class GameWorld extends Scene
 
 	private static function moveTween( inTime:Float, totalTime:Float, tweenStart:Float, tweenEnd:Float ):Float
 	{
-		/*var t = inTime ;
+		var t = inTime ;
 		var b = tweenStart ;
 		var c = tweenEnd - tweenStart ;
 		var d = totalTime ;
 		return (t/d * c) + b ;
-		*/
-		return ghostTween(inTime, totalTime, tweenStart, tweenEnd) ;
 	}
 
 	private static function ghostTween( inTime:Float, totalTime:Float, tweenStart:Float, tweenEnd:Float ):Float
