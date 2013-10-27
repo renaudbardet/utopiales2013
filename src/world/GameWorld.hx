@@ -27,6 +27,7 @@ import haxe.ds.Option;
 import openfl.Assets;
 import utopiales2013.Ghost;
 import utopiales2013.Hero;
+import utopiales2013.Piece;
 
 /**
  * ...
@@ -267,6 +268,8 @@ class GameWorld extends Scene
 		gameover = new Label("Paradoxe !");
 		gameover.size = 40;
 		gameover.color = 0x000000;
+		gameover.shadowColor = 0xFFFFFF;
+		gameover.shadowBorder = true;
 		gameover.x = HXP.screen.width / 2 - gameover.width / 2;
 		gameover.y = HXP.screen.height / 2 - gameover.height / 2;
 		
@@ -275,9 +278,11 @@ class GameWorld extends Scene
 		chrono.y = 0;
 		chrono.size = 20;
 		
-		txtWaitForKey = new Label("Commencez à vous deplacer\n   pour entrer en phase");
+		txtWaitForKey = new Label("Commencez a vous deplacer\n   pour entrer en phase");
 		txtWaitForKey.size = 20;
 		txtWaitForKey.color = 0x000000;
+		txtWaitForKey.shadowColor = 0xFFFFFF;
+		txtWaitForKey.shadowBorder = true;
 		txtWaitForKey.x = Math.round(HXP.screen.width / 2 - gameover.width / 1.5);
 		txtWaitForKey.y = Math.round(HXP.screen.height / 2 - gameover.height / 2);
 		add(txtWaitForKey);
@@ -289,7 +294,14 @@ class GameWorld extends Scene
 	
 		// afficher le niveau (grille)
 		if (xmlDebugContent != null) {
-			tiles = new TmxEntity( new TmxMap(xmlDebugContent));
+			
+			try {
+				tiles = new TmxEntity( new TmxMap(xmlDebugContent));
+			}catch (e:Dynamic) {
+				// fall back en cas de pb avec un niveau
+				tiles = new TmxEntity( "map/testLD _01.tmx" );
+				trace("fail loading level");
+			}
 		}else {
 			tiles = new TmxEntity( "map/test.tmx" );
 		}
@@ -358,7 +370,7 @@ class GameWorld extends Scene
 		super.begin();
 		
 		music = new Sfx("music/mainLoop.mp3");
-		music.loop(0.4);
+		music.loop(0.6);
 	}
 
 	private function timeJump()
@@ -438,18 +450,11 @@ class GameWorld extends Scene
 			tries++;
 		} while ( !isValidPosition && tries < 1000);
 
-		var piece = new Entity() ;
-		var spritemap = new Spritemap("gfx/SOLS.png", 20, 20) ;
-		spritemap.add( "std", [3], 1 ) ;
-		spritemap.play("std") ;
-		piece.graphic = spritemap ;
+		var piece = new Piece() ;
 		piece.layer = LAYER_PIECE;
 		add(piece) ;
-
 		piece.x = spawnX ;
 		piece.y = spawnY ;
-		piece.type = "piece" ;
-		piece.setHitbox(19, 19, -2, -2);
 
 	}
 	

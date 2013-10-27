@@ -1,14 +1,19 @@
 package com.haxepunk.gui;
 
+import com.haxepunk.graphics.Graphiclist;
 import com.haxepunk.graphics.Stamp;
 import com.haxepunk.HXP;
 import flash.display.BitmapData;
+import flash.geom.ColorTransform;
+import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import flash.text.Font;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
+import tools.display.ColorConverter;
+import tools.display.RGB;
 
 
 /**
@@ -18,6 +23,7 @@ import flash.text.TextFormatAlign;
  */
 class Label extends Control
 {
+	var rgb:RGB;
 	static public inline var ADDED_TO_CONTAINER:String = "added_to_container";
 	static public inline var REMOVED_FROM_CONTAINER:String = "removed_from_container";
 	static public inline var ADDED_TO_WORLD:String = "added_to_world";
@@ -91,6 +97,8 @@ class Label extends Control
 
 		super(x, y, width, height);
 		this.align = align;
+		
+		rgb = new RGB();
 	}
 
 	override public function added()
@@ -103,6 +111,24 @@ class Label extends Control
 	{
 		if (toBeRedraw) {
 			_textBuffer.fillRect(_renderRect, HXP.blackColor);
+			if (shadowColor != null) {
+				var m:Matrix = new Matrix();
+				m.tx = 1;
+				m.ty = 1;
+				ColorConverter.setRGB(shadowColor, this.rgb);
+				_textBuffer.draw(_textField, m, new ColorTransform(0, 0, 0, 1, rgb.r * 255, rgb.g * 255, rgb.b * 255, 0));
+				if (shadowBorder) {
+					m.tx = -1;
+					m.ty = -1;
+					_textBuffer.draw(_textField, m, new ColorTransform(0, 0, 0, 1, rgb.r * 255, rgb.g * 255, rgb.b * 255, 0));
+					m.tx = 1;
+					m.ty = -1;
+					_textBuffer.draw(_textField, m, new ColorTransform(0, 0, 0, 1, rgb.r * 255, rgb.g * 255, rgb.b * 255, 0));
+					m.tx = -1;
+					m.ty = 1;
+					_textBuffer.draw(_textField, m, new ColorTransform(0, 0, 0, 1, rgb.r * 255, rgb.g * 255, rgb.b * 255, 0));
+				}
+			}
 			_textBuffer.draw(_textField);
 			toBeRedraw = false;
 		}
@@ -269,8 +295,19 @@ class Label extends Control
 	 * Mostly used when Label is used as child of another component.
 	 */
 	public var disabledColor(get_disabledColor, set_disabledColor):Int;
-
-
+	
+	function get_shadowColor():Null<UInt>
+	{
+		return _shadowColor;
+	}
+	
+	function set_shadowColor(value:Null<UInt>):Null<UInt>
+	{
+		return _shadowColor = value;
+	}
+	
+	public var shadowColor(get_shadowColor, set_shadowColor):Null<UInt>;
+	
 	override private function set_enabled(value:Bool):Bool
 	{
 		if (value) {
@@ -297,4 +334,6 @@ class Label extends Control
 	private var _normalColor:Int;
 	private var toBeRedraw:Bool = true;
 	private var _alignOffset:Int = 0;
+	private var _shadowColor:Null<UInt> = null;
+	public var shadowBorder:Bool = false;
 }
