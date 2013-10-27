@@ -121,6 +121,9 @@ class GameWorld extends Scene
 		}
 		
 		if (Input.pressed(Key.ESCAPE)) {
+			HXP.scene = new WelcomeWorld();
+		}
+		if (Input.pressed(Key.R)) {
 			HXP.scene = new GameWorld(xmlDebugContent);
 		}
 		
@@ -131,7 +134,8 @@ class GameWorld extends Scene
 			}
 		}
 		if (gameEnd && Input.pressed(Key.ANY)) {
-			HXP.scene = new WelcomeWorld();
+			var levelName:String = tiles.map.properties.nom;
+			HXP.scene = new End(Std.string(score), levelName);
 		}
 		
 		if(!gameEnd && !waitForKey){
@@ -267,7 +271,7 @@ class GameWorld extends Scene
 		chrono.y = 0;
 		chrono.size = 20;
 		
-		txtWaitForKey = new Label(" Appuyez sur une touche\npour entrer dans la phase");
+		txtWaitForKey = new Label("Commencez à vous deplacer\n   pour entrer en phase");
 		txtWaitForKey.size = 20;
 		txtWaitForKey.color = 0x000000;
 		txtWaitForKey.x = Math.round(HXP.screen.width / 2 - gameover.width / 1.5);
