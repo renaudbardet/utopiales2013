@@ -53,6 +53,14 @@ class WelcomeWorld extends Scene
 		continueLabel.font = Assets.getFont("font/lythgame.ttf").fontName;
 		add(continueLabel) ;
 
+		var muteLabel = new Label("M = musique ON/OFF") ;
+		muteLabel.color = 0x000000 ;
+		muteLabel.size = 10 ;
+		muteLabel.x = Math.round((HXP.screen.width - muteLabel.width) - 10);
+		muteLabel.y = 10 ;
+		muteLabel.font = Assets.getFont("font/lythgame.ttf").fontName;
+		add(muteLabel) ;
+
 		var t = new VarTween( null, Looping ) ;
 		t.tween( continueLabel, "alpha", 0, 100, Ease.sineInOut ) ;
 		this.addTween( t ) ;

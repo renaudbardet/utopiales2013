@@ -211,7 +211,7 @@ class GameWorld extends Scene
 
 			// move halo
 			shading.fillRect( new Rectangle(0,0,shading.width,shading.height), SHADING_COLOR ) ;
-			var pt = new Point( hero.x-halo.width/2, hero.y - (15 + halo.height/2) ) ;
+			var pt = new Point( hero.x - 10 - halo.width/2, hero.y - (15 + halo.height/2) ) ;
 			/*switch (currentDir) {
 				case Up: pt.y -= 2*moveSpanY ;
 				case Down: pt.y += 2*moveSpanY ;
