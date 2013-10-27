@@ -18,16 +18,18 @@ class Piece extends Entity
 	{
 		skins = [] ;
 
-		var src:BitmapData = openfl.Assets.getBitmapData("gfx/SOLS.png") ;
+		var src:BitmapData = openfl.Assets.getBitmapData("gfx/pieces.png") ;
 		
 		var skin1 = new BitmapData( 20, 20, true ) ;
-		skin1.copyPixels( src, new Rectangle(0,60,20,20), new Point() ) ;
+		skin1.copyPixels( src, new Rectangle(0,0,20,20), new Point() ) ;
 		var skin2 = new BitmapData( 20, 20, true ) ;
-		skin2.copyPixels( src, new Rectangle(0,80,20,20), new Point() ) ;
+		skin2.copyPixels( src, new Rectangle(0,20,20,20), new Point() ) ;
 		var skin3 = new BitmapData( 20, 20, true ) ;
-		skin3.copyPixels( src, new Rectangle(0,100,20,20), new Point() ) ;
+		skin3.copyPixels( src, new Rectangle(0,40,20,20), new Point() ) ;
+		var skin4 = new BitmapData( 20, 20, true ) ;
+		skin4.copyPixels( src, new Rectangle(0,80,20,20), new Point() ) ;
 
-		for( skin in [skin1, skin2, skin3] )
+		for( skin in [skin1, skin2, skin3, skin4] )
 		{
 			var animSrc = new BitmapData( 66, 22, true ) ;
 			var tmpRect = new Rectangle(0,0,22,22) ;
