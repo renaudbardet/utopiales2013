@@ -44,18 +44,12 @@ class WelcomeWorld extends Scene
 		add(bg) ;
 		bg.layer = 9001 ;
 
-		var title = new Label("Tard is paradox") ;
-		title.color = 0xFFFFFF ;
-		title.size = 40 ;
-		title.x = Math.round((HXP.screen.width - title.width) / 2) ;
-		title.y = 30 ;
-		add(title) ;
-
 		var continueLabel = new Label("Appuyez sur une touche pour commencer") ;
 		continueLabel.color = 0xFFFFFF ;
 		continueLabel.size = 16 ;
 		continueLabel.x = Math.round((HXP.screen.width - continueLabel.width) / 2) ;
 		continueLabel.y = Math.round(10) ;
+		continueLabel.shadowColor = 0x000000;
 		continueLabel.font = Assets.getFont("font/lythgame.ttf").fontName;
 		add(continueLabel) ;
 

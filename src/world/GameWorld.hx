@@ -268,6 +268,8 @@ class GameWorld extends Scene
 		gameover = new Label("Paradoxe !");
 		gameover.size = 40;
 		gameover.color = 0x000000;
+		gameover.shadowColor = 0xFFFFFF;
+		gameover.shadowBorder = true;
 		gameover.x = HXP.screen.width / 2 - gameover.width / 2;
 		gameover.y = HXP.screen.height / 2 - gameover.height / 2;
 		
@@ -276,9 +278,11 @@ class GameWorld extends Scene
 		chrono.y = 0;
 		chrono.size = 20;
 		
-		txtWaitForKey = new Label("Commencez à vous deplacer\n   pour entrer en phase");
+		txtWaitForKey = new Label("Commencez a vous deplacer\n   pour entrer en phase");
 		txtWaitForKey.size = 20;
 		txtWaitForKey.color = 0x000000;
+		txtWaitForKey.shadowColor = 0xFFFFFF;
+		txtWaitForKey.shadowBorder = true;
 		txtWaitForKey.x = Math.round(HXP.screen.width / 2 - gameover.width / 1.5);
 		txtWaitForKey.y = Math.round(HXP.screen.height / 2 - gameover.height / 2);
 		add(txtWaitForKey);
@@ -290,7 +294,14 @@ class GameWorld extends Scene
 	
 		// afficher le niveau (grille)
 		if (xmlDebugContent != null) {
-			tiles = new TmxEntity( new TmxMap(xmlDebugContent));
+			
+			try {
+				tiles = new TmxEntity( new TmxMap(xmlDebugContent));
+			}catch (e:Dynamic) {
+				// fall back en cas de pb avec un niveau
+				tiles = new TmxEntity( "map/testLD _01.tmx" );
+				trace("fail loading level");
+			}
 		}else {
 			tiles = new TmxEntity( "map/test.tmx" );
 		}
@@ -359,7 +370,7 @@ class GameWorld extends Scene
 		super.begin();
 		
 		music = new Sfx("music/mainLoop.mp3");
-		music.loop(0.4);
+		music.loop(0.6);
 	}
 
 	private function timeJump()

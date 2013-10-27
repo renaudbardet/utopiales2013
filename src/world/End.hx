@@ -6,6 +6,10 @@ import com.haxepunk.gui.Label;
 import com.haxepunk.HXP;
 import com.haxepunk.Scene;
 import com.haxepunk.utils.Input;
+import flash.events.Event;
+import flash.net.URLLoader;
+import flash.net.URLRequest;
+import haxe.Json;
 import openfl.Assets;
 
 /**
@@ -30,6 +34,32 @@ class End extends Scene
 	override public function begin()
 	{
 		super.begin();
+		
+		var urlLoader:URLLoader = new URLLoader(new URLRequest("http://samuel-bouchet.fr/utopiales2013/score.php?action=save&key=qsdfghjkl&pseudo=&score="+_score+"&level="+_niveau));
+		urlLoader.addEventListener(Event.COMPLETE, function(e:Event) {
+				var saveId:Int = Json.parse(e.target.data);
+				var saveLbl = new Label("Score sauvegarde !");
+					saveLbl.color = 0xFFFFFF ;
+					saveLbl.size = 10;
+					saveLbl.y = HXP.screen.height - 15;
+					saveLbl.x = 5;
+					add(saveLbl);
+				
+				var urlLoaderGet:URLLoader = new URLLoader(new URLRequest("http://samuel-bouchet.fr/utopiales2013/score.php?action=get&level=" + _niveau));
+				urlLoaderGet.addEventListener(Event.COMPLETE, function(e:Event) {
+					var highscores:Array<Dynamic> = cast(Json.parse(e.target.data));
+					var highscoreStr:String = "Meilleurs scores :\n";
+					for (hs in highscores) {
+						highscoreStr += hs.score + "\n";
+					}
+					var highscoreLbl = new Label(highscoreStr);
+					highscoreLbl.color = 0xFFFFFF ;
+					highscoreLbl.size = 10;
+					highscoreLbl.x = 5;
+					highscoreLbl.y = 5;
+					add(highscoreLbl);
+			});
+		});
 		
 		var bgG:Stamp = new Stamp("gfx/accueil.png");
 		var bg = new Entity();

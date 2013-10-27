@@ -64,6 +64,7 @@ class Story extends Scene
 		title.size = 8 ;
 		title.x = Math.round((HXP.screen.width - title.width) / 2) ;
 		title.y = 30 ;
+		title.shadowColor = 0x000000;
 		add(title) ;
 
 		//var t = new VarTween( null, Looping ) ;
@@ -99,11 +100,21 @@ class Story extends Scene
 			HXP.scene = new GameWorld(Assets.getText("map/testLD _11.tmx"));
 		} else if ( Input.pressed(com.haxepunk.utils.Key.ANY) ) {
 			var levels = new Array<String>();
-			for (i in 1...11) {
+			
+			for (i in 1...21) {
 				levels.push("map/testLD _"+(Std.string(i).length == 1 ? "0" + Std.string(i) : Std.string(i))+".tmx");
 			}
 			var rand = Math.floor(Math.random() * levels.length);
-			HXP.scene = new GameWorld(Assets.getText(levels[rand]));
+			
+			try {
+				HXP.scene = new GameWorld(Assets.getText(levels[rand]));
+			}catch (e:Dynamic) {
+				trace("fail loading level "+e);
+				// fall back en cas de pb avec un niveau
+				HXP.scene = new GameWorld(Assets.getText("map/testLD _01.tmx"));
+				
+			}
+			
 		}
 		super.update();
 	}
