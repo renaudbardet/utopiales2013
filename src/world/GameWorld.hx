@@ -1,6 +1,8 @@
 package world;
 import com.haxepunk.Entity;
+import com.haxepunk.graphics.Image;
 import com.haxepunk.graphics.Spritemap;
+import com.haxepunk.graphics.Stamp;
 import com.haxepunk.gui.Button;
 import com.haxepunk.gui.Control;
 import com.haxepunk.gui.Label;
@@ -18,9 +20,12 @@ import com.haxepunk.tmx.TmxObject;
 import com.haxepunk.tmx.TmxObjectGroup;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
 import flash.display.Loader;
 import flash.events.Event;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 import haxe.ds.Option;
@@ -62,7 +67,8 @@ class GameWorld extends Scene
 	private static var BASE_SCORE = 10 ;
 
 	private static var LAYER_GUI:Int = 100;
-	private static var LAYER_PIECE:Int = 805;
+	private static var LAYER_PIECE:Int = 200;
+	private static var LAYER_SHADING:Int = 300;
 	private static var LAYER_HERO:Int = 800;
 	private static var LAYER_GHOST:Int = 900;
 	private static var LAYER_VISION:Int = 950;
@@ -97,6 +103,10 @@ class GameWorld extends Scene
 
 	private var score:Int ;
 	var music:Sfx;
+
+	private static var SHADING_COLOR = 0x7FFF0000 ;
+	private var shading:BitmapData ;
+	private var halo:BitmapData ;
 
 	public function new(xmlContent:String = null )
 	{
@@ -187,6 +197,10 @@ class GameWorld extends Scene
 			hero.x = moveTween( inTime - moveStartTime, TURN_DURATION - moveStartTime, prevFrame.x, nextX ) ;
 			hero.y = moveTween( inTime - moveStartTime, TURN_DURATION - moveStartTime, prevFrame.y, nextY ) ;
 			hero.play( currentDir, isMoving ) ;
+
+			// move halo
+			shading.fillRect( new Rectangle(0,0,shading.width,shading.height), SHADING_COLOR ) ;
+			//shading.copyChannel( )
 
 			// pilot ghosts
 			for( r in runs )
@@ -313,6 +327,15 @@ class GameWorld extends Scene
 		gridHeight = tiles.map.height ;
 		tiles.y = HXP.screen.height - tiles.map.fullHeight;
 		tiles.x = HXP.screen.width / 2 - tiles.map.fullWidth / 2;
+
+		// shading
+		shading = new BitmapData(tiles.map.fullWidth, tiles.map.fullHeight, true, SHADING_COLOR) ;
+		var shadingEntity = new Entity() ;
+		shadingEntity.graphic = new Stamp(shading) ;
+		shadingEntity.y = tiles.y ;
+		shadingEntity.x = tiles.x ;
+
+		halo = Assets.getBitmapData("gfx/halo.png") ;
 		
 		// collisions de la map
 		tiles.loadMask("tiles", "solid", [25]);
@@ -334,6 +357,8 @@ class GameWorld extends Scene
 		tiles.layer = LAYER_MAP;
 		add(hero);
 		hero.layer = LAYER_HERO;
+		add(shadingEntity) ;
+		shadingEntity.layer = LAYER_SHADING ;
 		add(chrono);
 		chrono.layer = LAYER_GUI;
 		add(scoreLabel);
