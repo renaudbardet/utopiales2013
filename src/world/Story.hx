@@ -39,23 +39,29 @@ class Story extends Scene
 		super.begin();
 
 		var title = new Label(
-			"               Oh bonjour, comment allez vous ?" + '\n' +
-			"          Je resterais bien discuter avec vous mais" + '\n' +
-			"          apres un passage au coeur d'une supernova" + '\n' +
-			"   le processeur temporel de mon vaisseau rencontre quelques" + '\n' +
-			"                            difficultes." + '\n' +
+			"Oh bonjour, comment allez vous ?" + '\n' +
+			"Je resterais bien discuter avec vous mais" + '\n' +
+			"apres un passage au coeur d'une supernova" + '\n' +
+			"le processeur temporel de mon vaisseau rencontre quelques" + '\n' +
+			"difficultes." + '\n' +
 			'\n' +
-			"          Je ferais mieux de le reparer au plus vite" + '\n' +
-			"         ou nous risquons de provoquer une singularite," + '\n' +
-			"sans grandes consequences bien sur, juste la survie de l'univers." + '\n' +
+			"    Je ferais mieux de le reparer au plus vite" + '\n' +
+			"    ou nous risquons de provoquer une singularite," + '\n' +
+			"    sans grandes consequences rassurez-vous," + '\n' +
+			"    a moins qu'elle ne dechire l'espace temps, ce qui est tres probable." + '\n' +
 			'\n' +
-			"      Il semblerait qu'au sein du vaisseau le temps boucle" + '\n' +
-			"         sur lui-meme, je ferais mieux d'etre prudent," + '\n' +
-			"     je ne voudrais pas tomber sur moi meme et causer un" + '\n' +
-			"                             paradoxe."
+			"Il semblerait que la salle de machines soit prise dans une boucle temporelle" + '\n' +
+			"restons prudents," + '\n' +
+			"nous ne voudrions pas tomber sur nous meme et causer un" + '\n' +
+			"paradoxe, n'est-ce pas?" + '\n' +
+			'\n' +
+			'\n' +
+			"    Vous etes pret ?" + '\n' +
+			"    Alors Allons-y!"
 		) ;
+		title.font = openfl.Assets.getFont("font/pf_ronda_seven.ttf").fontName;
 		title.color = 0xFFFFFF ;
-		title.size = 10 ;
+		title.size = 8 ;
 		title.x = Math.round((HXP.screen.width - title.width) / 2) ;
 		title.y = 30 ;
 		add(title) ;
