@@ -2,6 +2,7 @@ package utopiales2013;
 
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Canvas;
+import com.haxepunk.graphics.Spritemap;
 import flash.display.BitmapData;
 import flash.geom.Rectangle;
 import utopiales2013.Ghost;
@@ -17,8 +18,8 @@ class Vision extends Entity
 	private var _moveSpanX:Float;
 	private var _moveSpanY:Float;
 	private var _ghost:Ghost;
-	var canvasH:Canvas;
-	var canvasV:Canvas;
+	var canvasH:Spritemap;
+	var canvasV:Spritemap;
 	
 	private static var TOLERANCE:Int = 2;
 
@@ -28,11 +29,18 @@ class Vision extends Entity
 		_detectionDistance = detectionDistance;
 		_moveSpanX = moveSpanX;
 		_moveSpanY = moveSpanY;
-		
-		canvasH = new Canvas(Math.ceil(detectionDistance * moveSpanX), Math.ceil(moveSpanY));
-		canvasH.fill(new Rectangle(0, 0, canvasH.width, canvasH.height), 0x5481E9,0.8);
-		canvasV = new Canvas(Math.ceil(moveSpanX), Math.ceil(detectionDistance * moveSpanY));
-		canvasV.fill(new Rectangle(0, 0, canvasV.width, canvasV.height), 0x5481E9,0.8);
+
+		canvasH = new Spritemap("gfx/torche.png", 60, 20) ;
+		canvasH.add("std", [1,2], 5) ;
+		canvasH.play("std") ;
+		var bmp = openfl.Assets.getBitmapData("gfx/torche.png") ;
+		var mat = new flash.geom.Matrix() ;
+		mat.rotate(-Math.PI/2) ;
+		var bmp2 = new BitmapData(bmp.height,bmp.width, true, 0) ;
+		bmp2.draw(bmp, mat) ;
+		canvasV = new Spritemap(bmp2, 20, 60) ;
+		canvasV.add("std", [1,2], 5) ;
+		canvasV.play("std") ;
 		
 		super();
 	}
