@@ -30,6 +30,7 @@ import haxe.ds.Option;
 import openfl.Assets;
 import utopiales2013.Ghost;
 import utopiales2013.Hero;
+import utopiales2013.Piece;
 
 /**
  * ...
@@ -461,18 +462,11 @@ class GameWorld extends Scene
 			tries++;
 		} while ( !isValidPosition && tries < 1000);
 
-		var piece = new Entity() ;
-		var spritemap = new Spritemap("gfx/SOLS.png", 20, 20) ;
-		spritemap.add( "std", [3], 1 ) ;
-		spritemap.play("std") ;
-		piece.graphic = spritemap ;
+		var piece = new Piece() ;
 		piece.layer = LAYER_PIECE;
 		add(piece) ;
-
 		piece.x = spawnX ;
 		piece.y = spawnY ;
-		piece.type = "piece" ;
-		piece.setHitbox(19, 19, -2, -2);
 
 	}
 	
