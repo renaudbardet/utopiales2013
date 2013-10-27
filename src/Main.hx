@@ -44,7 +44,7 @@ class Main extends Engine
 		Input.define("right", [Key.D, Key.RIGHT]);
 		Input.define("down", [Key.S, Key.DOWN]);
 		Input.define("left", [Key.Q, Key.A, Key.LEFT]);
-		Input.define("action1", [Key.E, Key.ENTER]);
+
 	}
 
 	public static function main()
@@ -54,7 +54,13 @@ class Main extends Engine
 	
 	override public function update()
 	{
+
+		if( Input.pressed(Key.M) ) {
+			HXP.volume = 1 - HXP.volume ;
+		}
+
 		super.update();
+
 	}
 
 }
