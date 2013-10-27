@@ -8,6 +8,7 @@ import com.haxepunk.gui.Control;
 import com.haxepunk.gui.FormatAlign;
 import com.haxepunk.gui.Label;
 import flash.text.TextFormat;
+import utopiales2013.Vision;
 #if debug
 import com.haxepunk.gui.TextInput;
 #end
@@ -238,8 +239,9 @@ class GameWorld extends Scene
 		hero.y = Math.round((hero.y - tiles.y) / 20) * 20 + tiles.y;
 				
 		// condition de fin
-		var iSeeYou:Ghost = cast(hero.collide("vision", hero.x, hero.y));
-		if (iSeeYou != null) {
+		var v:Vision = cast(hero.collide("vision", hero.x, hero.y));
+		if (v != null) {
+			var iSeeYou:Ghost = v.ghost;
 			gameEnd = true;
 			stopAllAnimations();
 			iSeeYou.jump(iSeeYou.direction);

@@ -141,4 +141,16 @@ class Vision extends Entity
 		setHitbox(width-2*TOLERANCE, height-2*TOLERANCE);
 	}
 	
+	function get_ghost():Ghost
+	{
+		return _ghost;
+	}
+	
+	function set_ghost(value:Ghost):Ghost
+	{
+		return _ghost = value;
+	}
+	
+	public var ghost(get_ghost, set_ghost):Ghost;
+	
 }

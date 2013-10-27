@@ -1,6 +1,7 @@
 package utopiales2013;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Spritemap;
+import com.haxepunk.Tween.CompleteCallback;
 import com.haxepunk.Tween.TweenType;
 import com.haxepunk.tweens.misc.VarTween;
 import com.haxepunk.utils.Ease;
@@ -98,14 +99,18 @@ class Hero extends Entity
 	
 	public function jump(direction:Direction) {
 		
-		/*var jumpTweener:VarTween = new VarTween(jumpOver, TweenType.OneShot);
-		jumpTweener.tween(this, "y", y + 10, 0.5, Ease.bounceIn);
-		jumpTweener.start();*/
+		var jumpTweener:VarTween = new VarTween(function(e):Void {
+				var jumpTweener2:VarTween = new VarTween(function(e):Void {}, TweenType.OneShot);
+				jumpTweener2.tween(this, "y", this.y + 15, 25, Ease.sineOut);
+				addTween(jumpTweener2, true);
+			}, TweenType.OneShot);
+		jumpTweener.tween(this, "y", this.y - 15, 25, Ease.sineIn);
+		addTween(jumpTweener, true);
+		
 		switch (direction)
 		{
 			case Direction.Up:
 				_spritemap.play("jumpup");
-				
 			case Direction.Down:
 				_spritemap.play("jumpdown");
 			case Direction.Left:
