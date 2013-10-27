@@ -7,6 +7,10 @@ import com.haxepunk.gui.Button;
 import com.haxepunk.gui.Control;
 import com.haxepunk.gui.FormatAlign;
 import com.haxepunk.gui.Label;
+import com.haxepunk.Tween;
+import com.haxepunk.tweens.misc.MultiVarTween;
+import com.haxepunk.tweens.misc.VarTween;
+import com.haxepunk.utils.Ease;
 import flash.text.TextFormat;
 import utopiales2013.Vision;
 #if debug
@@ -111,6 +115,8 @@ class GameWorld extends Scene
 	private static var SHADING_COLOR = 0x7FFF0000 ;
 	private var shading:BitmapData ;
 	private var halo:BitmapData ;
+	var pickUpSfx:Sfx;
+	var paradoxSfx:Sfx;
 
 	public function new(xmlContent:String = null )
 	{
@@ -241,18 +247,29 @@ class GameWorld extends Scene
 		// condition de fin
 		var v:Vision = cast(hero.collide("vision", hero.x, hero.y));
 		if (v != null) {
+			paradoxSfx.play();
+			
 			var iSeeYou:Ghost = v.ghost;
 			gameEnd = true;
 			stopAllAnimations();
 			iSeeYou.jump(iSeeYou.direction);
 			hero.jump(iSeeYou.backDirection);
 			add(gameover);
+			
+			function shakeFn(e):Void {
+				var shake:MultiVarTween = new MultiVarTween(shakeFn, TweenType.OneShot);
+				shake.tween(gameover, { x:Math.round(gameover.x + Math.random() * 6 - 3), y:Math.round(gameover.y + Math.random() * 6 - 3) },4,Ease.expoIn );
+				addTween(shake, true);
+			};
+			
+			shakeFn(null);
 		}
 		
 		// recuperation bonus
 		var retreivedPiece = hero.collide( "piece", hero.x, hero.y ) ;
 		if( retreivedPiece != null )
 		{
+			pickUpSfx.play(0.3);
 			remove( retreivedPiece ) ;
 			currentPieces.remove( retreivedPiece ) ;
 			score += BASE_SCORE ;
@@ -283,6 +300,10 @@ class GameWorld extends Scene
 	
 	override public function begin()
 	{
+		// sons
+		pickUpSfx = new Sfx("sfx/pickup.wav");
+		paradoxSfx = new Sfx("sfx/paradox.wav");
+		
 		// création des objets du niveau
 		hero = new Hero();
 		chrono = new Label();
@@ -407,7 +428,7 @@ class GameWorld extends Scene
 		super.begin();
 		
 		music = new Sfx("music/mainLoop.mp3");
-		music.loop(0.6);
+		music.loop(0.95);
 	}
 
 	private function timeJump()

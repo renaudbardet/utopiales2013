@@ -101,10 +101,10 @@ class Hero extends Entity
 		
 		var jumpTweener:VarTween = new VarTween(function(e):Void {
 				var jumpTweener2:VarTween = new VarTween(function(e):Void {}, TweenType.OneShot);
-				jumpTweener2.tween(this, "y", this.y + 15, 25, Ease.sineOut);
+				jumpTweener2.tween(this, "y", this.y + 15, 15, Ease.sineOut);
 				addTween(jumpTweener2, true);
 			}, TweenType.OneShot);
-		jumpTweener.tween(this, "y", this.y - 15, 25, Ease.sineIn);
+		jumpTweener.tween(this, "y", this.y - 15, 15, Ease.sineIn);
 		addTween(jumpTweener, true);
 		
 		switch (direction)

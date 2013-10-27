@@ -121,6 +121,7 @@ class Story extends Scene
 	
 	override public function end()
 	{
+		WelcomeWorld.instance.music.stop();
 		removeAll();
 		super.end();
 	}

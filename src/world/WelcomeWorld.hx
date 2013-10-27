@@ -22,9 +22,9 @@ import com.haxepunk.utils.Input;
 
 class WelcomeWorld extends Scene
 {
-	var music:Sfx;
+	var _music:Sfx;
 	
-	public static var instance:Scene ;
+	public static var instance:WelcomeWorld ;
 	public static var guiInitialized:Bool = false ;
 
 	public function new()
@@ -58,8 +58,8 @@ class WelcomeWorld extends Scene
 		this.addTween( t ) ;
 		t.start() ;
 
-		music = new Sfx("music/mainLoop.mp3");
-		music.loop(0.4);
+		music = new Sfx("music/MenuMusicCroped.mp3");
+		music.loop(0.2);
 	}
 	
 	override public function update()
@@ -71,7 +71,6 @@ class WelcomeWorld extends Scene
 	
 	override public function end()
 	{
-		music.stop();
 		removeAll();
 		super.end();
 	}
@@ -104,5 +103,17 @@ class WelcomeWorld extends Scene
 			WelcomeWorld.guiInitialized = true;
 		}
 	}
+	
+	function get_music():Sfx
+	{
+		return _music;
+	}
+	
+	function set_music(value:Sfx):Sfx
+	{
+		return _music = value;
+	}
+	
+	public var music(get_music, set_music):Sfx;
 	
 }
