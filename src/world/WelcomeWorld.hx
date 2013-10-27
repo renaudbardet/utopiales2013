@@ -49,6 +49,7 @@ class WelcomeWorld extends Scene
 		continueLabel.size = 16 ;
 		continueLabel.x = Math.round((HXP.screen.width - continueLabel.width) / 2) ;
 		continueLabel.y = Math.round(10) ;
+		continueLabel.shadowColor = 0x000000;
 		continueLabel.font = Assets.getFont("font/lythgame.ttf").fontName;
 		add(continueLabel) ;
 

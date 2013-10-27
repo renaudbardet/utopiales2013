@@ -64,6 +64,7 @@ class Story extends Scene
 		title.size = 8 ;
 		title.x = Math.round((HXP.screen.width - title.width) / 2) ;
 		title.y = 30 ;
+		title.shadowColor = 0x000000;
 		add(title) ;
 
 		//var t = new VarTween( null, Looping ) ;

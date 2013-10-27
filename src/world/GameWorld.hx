@@ -267,6 +267,8 @@ class GameWorld extends Scene
 		gameover = new Label("Paradoxe !");
 		gameover.size = 40;
 		gameover.color = 0x000000;
+		gameover.shadowColor = 0xFFFFFF;
+		gameover.shadowBorder = true;
 		gameover.x = HXP.screen.width / 2 - gameover.width / 2;
 		gameover.y = HXP.screen.height / 2 - gameover.height / 2;
 		
@@ -278,6 +280,8 @@ class GameWorld extends Scene
 		txtWaitForKey = new Label("Commencez a vous deplacer\n   pour entrer en phase");
 		txtWaitForKey.size = 20;
 		txtWaitForKey.color = 0x000000;
+		txtWaitForKey.shadowColor = 0xFFFFFF;
+		txtWaitForKey.shadowBorder = true;
 		txtWaitForKey.x = Math.round(HXP.screen.width / 2 - gameover.width / 1.5);
 		txtWaitForKey.y = Math.round(HXP.screen.height / 2 - gameover.height / 2);
 		add(txtWaitForKey);
